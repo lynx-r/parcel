@@ -1,7 +1,15 @@
 <template>
-  <div>
-    <NuxtPage />
-  </div>
+  <UApp>
+    <AppHeader />
+
+    <UMain>
+      <NuxtPage />
+    </UMain>
+
+    <USeparator />
+
+    <!-- <AppFooter /> -->
+  </UApp>
 </template>
 
 <script setup lang="ts">

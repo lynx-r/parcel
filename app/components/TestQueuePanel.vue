@@ -5,23 +5,20 @@
     </div>
 
     <!-- Filters -->
-    <div class="p-3 border-b border-gray-200 space-y-2">
+    <div class="flex flex-col">
       <USelect
         v-model="statusFilter"
         :options="statusFilterOptions"
-        size="xs"
         placeholder="Filter by status"
       />
       <USelect
         v-model="typeFilter"
         :options="typeFilterOptions"
-        size="xs"
         placeholder="Filter by type"
       />
       <UInput
         v-model="searchQuery"
         icon="i-heroicons-magnifying-glass"
-        size="xs"
         placeholder="Search tests..."
       />
     </div>
@@ -201,8 +198,8 @@ import type { Test } from '~/types/fsm'
 const { tests } = useMockData()
 
 const searchQuery = ref('')
-const statusFilter = ref(null)
-const typeFilter = ref(null)
+const statusFilter = ref('')
+const typeFilter = ref('')
 const selectedTest = ref<Test | null>(null)
 const selectedRows = ref({})
 const isAddTestModalOpen = ref(false)
@@ -215,7 +212,7 @@ const newTestForm = ref({
 })
 
 const statusFilterOptions = [
-  { label: 'All', value: null },
+  { label: 'All', value: 'all' },
   { label: 'Success', value: 'success' },
   { label: 'Error', value: 'error' },
   { label: 'In Progress', value: 'in_progress' },
