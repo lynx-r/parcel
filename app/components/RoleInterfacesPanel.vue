@@ -32,67 +32,69 @@
         </div>
       </div>
     </div>
-    <UTabs v-model="activeTab" :items="tabs" />
-    <div v-if="activeTab === 'client'">
-      <UInput v-model="orderId" placeholder="Order ID" class="mb-2" />
-      <UButton
-        :class="{ 'animate-pulse': highlightButton === 'create_order' }"
-        @click="performAction('create_order')"
-        >Create Order</UButton
-      >
-      <UButton
-        :class="{ 'animate-pulse': highlightButton === 'cancel_order' }"
-        @click="performAction('cancel_order')"
-        >Cancel Order</UButton
-      >
-    </div>
-    <!-- Other tabs (Recipient, Courier, etc.) similar -->
-    <div v-if="activeTab === 'fsm'">
-      <div class="flex space-x-4 mb-4">
-        <USelect
-          v-model="filterEntityType"
-          :options="['all', 'order', 'stage_order', 'trip']"
-          placeholder="Filter by Entity Type"
-          @update:model-value="applyFilters"
-        />
-        <USelect
-          v-model="filterState"
-          :options="states"
-          placeholder="Filter by State"
-          @update:model-value="applyFilters"
-        />
-      </div>
-      <UTable
-        :columns="fsmHeaders"
-        :rows="filteredEntities"
-        @row-click="showHistory"
-      >
-        <template #actions="{ row }">
+    <UTabs v-model="activeTab" :items="tabs">
+      <template #client>
+        <UInput v-model="orderId" placeholder="Order ID" class="mb-2" />
+        <UButton
+          :class="{ 'animate-pulse': highlightButton === 'create_order' }"
+          @click="performAction('create_order')"
+          >Create Order</UButton
+        >
+        <UButton
+          :class="{ 'animate-pulse': highlightButton === 'cancel_order' }"
+          @click="performAction('cancel_order')"
+          >Cancel Order</UButton
+        >
+      </template>
+      <template #fsm>
+        <div class="flex space-x-4 mb-4">
           <USelect
-            v-model="row.selectedAction"
-            :options="row.available_actions"
-            :class="{
-              'animate-pulse': highlightButton === row.selectedAction,
-            }"
-            placeholder="Select Action"
-            class="w-40"
+            v-model="filterEntityType"
+            :items="['all', 'order', 'stage_order', 'trip']"
+            placeholder="Filter by Entity Type"
+            @update:model-value="applyFilters"
           />
-          <UButton @click="performFsmAction(row)">Perform</UButton>
-        </template>
-      </UTable>
-      <UModal v-model="dialog">
-        <UCard>
-          <template #header>
-            <h3>
-              Action History for {{ selectedEntity.entity_type }} #{{
-                selectedEntity.entity_id
-              }}
-            </h3>
+          <USelect
+            v-model="filterState"
+            :items="states"
+            placeholder="Filter by State"
+            @update:model-value="applyFilters"
+          />
+        </div>
+        <UTable
+          :columns="fsmHeaders"
+          :rows="filteredEntities"
+          @row-click="showHistory"
+        >
+          <template #actions="{ row }">
+            <USelect
+              v-model="row.selectedAction"
+              :options="row.available_actions"
+              :class="{
+                'animate-pulse': highlightButton === row.selectedAction,
+              }"
+              placeholder="Select Action"
+              class="w-40"
+            />
+            <UButton @click="performFsmAction(row)">Perform</UButton>
           </template>
-          <UTable :columns="historyHeaders" :rows="actionHistory" />
-        </UCard>
-      </UModal>
-    </div>
+        </UTable>
+        <UModal v-model="dialog">
+          <UCard>
+            <template #header>
+              <h3>
+                Action History for {{ selectedEntity.entity_type }} #{{
+                  selectedEntity.entity_id
+                }}
+              </h3>
+            </template>
+            <UTable :columns="historyHeaders" :rows="actionHistory" />
+          </UCard>
+        </UModal>
+      </template>
+    </UTabs>
+
+    <!-- Other tabs (Recipient, Courier, etc.) similar -->
   </UCard>
 </template>
 
@@ -114,18 +116,18 @@ const selectedEntity = ref({})
 const actionHistory = ref([])
 
 const fsmHeaders = [
-  { key: 'entity_type', title: 'Entity Type' },
-  { key: 'entity_id', title: 'Entity ID' },
-  { key: 'current_state', title: 'Current State' },
-  { key: 'description', title: 'Description' },
-  { key: 'actions', title: 'Actions' },
+  { accessorKey: 'entity_type', header: 'Entity Type' },
+  { accessorKey: 'entity_id', header: 'Entity ID' },
+  { accessorKey: 'current_state', header: 'Current State' },
+  { accessorKey: 'description', header: 'Description' },
+  { accessorKey: 'actions', header: 'Actions' },
 ]
 
 const historyHeaders = [
-  { key: 'action_name', title: 'Action' },
-  { key: 'from_state', title: 'From State' },
-  { key: 'to_state', title: 'To State' },
-  { key: 'created_at', title: 'Time' },
+  { accessorKey: 'action_name', header: 'Action' },
+  { accessorKey: 'from_state', header: 'From State' },
+  { accessorKey: 'to_state', header: 'To State' },
+  { accessorKey: 'created_at', header: 'Time' },
 ]
 
 const entities = ref([
@@ -151,12 +153,12 @@ const filteredEntities = computed(() =>
 )
 
 const tabs = [
-  { label: 'Client', value: 'client' },
-  { label: 'Recipient', value: 'recipient' },
-  { label: 'Courier', value: 'courier' },
-  { label: 'Driver', value: 'driver' },
-  { label: 'Operator', value: 'operator' },
-  { label: 'FSM Emulator', value: 'fsm' },
+  { label: 'Client', value: 'client', slot: 'client' },
+  { label: 'Recipient', value: 'recipient', slot: 'recipient' },
+  { label: 'Courier', value: 'courier', slot: 'courier' },
+  { label: 'Driver', value: 'driver', slot: 'driver' },
+  { label: 'Operator', value: 'operator', slot: 'operator' },
+  { label: 'FSM Emulator', value: 'fsm', slot: 'fsm' },
 ]
 
 async function applyFilters() {
