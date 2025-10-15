@@ -1,8 +1,8 @@
-import eslintConfigPrettier from "eslint-config-prettier";
-import prettierPlugin from "eslint-plugin-prettier";
-import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import eslintConfigPrettier from 'eslint-config-prettier'
+import prettierPlugin from 'eslint-plugin-prettier'
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 // @ts-check
-import withNuxt from "./.nuxt/eslint.config.mjs";
+import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt({
   plugins: {
@@ -13,4 +13,4 @@ export default withNuxt({
     ...eslintConfigPrettier.rules,
     ...eslintPluginPrettierRecommended.rules,
   },
-});
+})

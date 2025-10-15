@@ -21,59 +21,62 @@
     <!-- Lockers List -->
     <div class="flex-1 overflow-auto p-4">
       <UAccordion :items="filteredLockers" :multiple="true">
-        <template #default="{ item, open }">
-          <UButton
-            color="gray"
+        <template #content="{ item }">
+          <!-- <UButton
+            color="neutral"
             variant="ghost"
             class="w-full justify-between"
-            :ui="{ rounded: 'rounded-lg' }"
-          >
-            <div class="flex items-center gap-3">
-              <div
-                class="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold text-sm"
-              >
-                {{ item.id }}
-              </div>
-              <div class="text-left">
-                <p class="font-medium text-gray-900">Locker #{{ item.id }}</p>
-                <p class="text-sm text-gray-600">
-                  {{ item.address }}
-                </p>
-              </div>
+          > -->
+          <!-- :ui="{ rounded: 'rounded-lg' }" -->
+          <div class="flex items-center gap-3">
+            <div
+              class="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold text-sm"
+            >
+              {{ item.id }}
             </div>
-            <UIcon
+            <div class="text-left">
+              <p class="font-medium text-gray-900">Locker #{{ item.id }}</p>
+              <p class="text-sm text-gray-600">
+                {{ item.address }}
+              </p>
+            </div>
+          </div>
+          <!-- <UIcon
               :name="
                 open ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'
               "
               class="w-5 h-5 text-gray-400"
-            />
-          </UButton>
+            /> -->
+          <!-- </UButton> -->
         </template>
 
-        <template #item="{ item }">
+        <template #body="{ item }">
           <div class="p-4 bg-gray-50 rounded-b-lg">
             <UTable :rows="item.cells" :columns="cellColumns">
-              <template #size-data="{ row }">
-                <UBadge :color="getSizeBadgeColor(row.size)" variant="subtle">
-                  {{ row.size }}
-                </UBadge>
-              </template>
-
-              <template #status-data="{ row }">
+              <template #size-cell="{ row }">
                 <UBadge
-                  :color="getStatusBadgeColor(row.status)"
+                  :color="getSizeBadgeColor(row.original.size)"
                   variant="subtle"
                 >
-                  {{ getStatusLabel(row.status) }}
+                  {{ row.original.size }}
                 </UBadge>
               </template>
 
-              <template #actions-data="{ row }">
+              <template #status-cell="{ row }">
+                <UBadge
+                  :color="getStatusBadgeColor(row.original.status)"
+                  variant="subtle"
+                >
+                  {{ getStatusLabel(row.original.status) }}
+                </UBadge>
+              </template>
+
+              <template #actions-cell="{ row }">
                 <UButton
                   color="primary"
                   variant="ghost"
                   size="xs"
-                  @click="openCellDetails(row)"
+                  @click="openCellDetails(row.original)"
                 >
                   Details
                 </UButton>
@@ -91,7 +94,7 @@
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-semibold text-gray-900">Cell Details</h3>
             <UButton
-              color="gray"
+              color="neutral"
               variant="ghost"
               icon="i-heroicons-x-mark"
               @click="isModalOpen = false"
@@ -144,41 +147,43 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue"
-import { useMockData } from "~/composables/useMockData"
+import type { TableColumn } from '@nuxt/ui'
+import { computed, ref } from 'vue'
+import { useMockData } from '~/composables/useMockData'
+import type { Cell } from '~/types/fsm'
 
-const searchQuery = ref("");
-const statusFilter = ref(null);
-const isModalOpen = ref(false);
-const selectedCell = ref(null);
+const searchQuery = ref('')
+const statusFilter = ref(null)
+const isModalOpen = ref(false)
+const selectedCell = ref<Cell | null>(null)
 
-const { parcelLockers } = useMockData();
+const { parcelLockers } = useMockData()
 
 const statusFilterOptions = [
-  { label: "All", value: null },
-  { label: "Free", value: "free" },
-  { label: "Occupied", value: "occupied" },
-  { label: "In Repair", value: "repair" },
-];
+  { label: 'All', value: null },
+  { label: 'Free', value: 'free' },
+  { label: 'Occupied', value: 'occupied' },
+  { label: 'In Repair', value: 'repair' },
+]
 
-const cellColumns = [
-  { key: "number", label: "Cell #" },
-  { key: "size", label: "Size" },
-  { key: "status", label: "Status" },
-  { key: "actions", label: "" },
-];
+const cellColumns: TableColumn<Cell>[] = [
+  { accessorKey: 'number', header: 'Cell #' },
+  { accessorKey: 'size', header: 'Size' },
+  { accessorKey: 'status', header: 'Status' },
+  { accessorKey: 'actions', header: '' },
+]
 
 const filteredLockers = computed(() => {
-  let filtered = parcelLockers;
+  let filtered = parcelLockers
 
   // Search filter
   if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase();
+    const query = searchQuery.value.toLowerCase()
     filtered = filtered.filter(
       (locker) =>
         locker.address.toLowerCase().includes(query) ||
         locker.id.toString().includes(query),
-    );
+    )
   }
 
   // Status filter
@@ -190,54 +195,57 @@ const filteredLockers = computed(() => {
           (cell) => cell.status === statusFilter.value,
         ),
       }))
-      .filter((locker) => locker.cells.length > 0);
+      .filter((locker) => locker.cells.length > 0)
   }
 
-  return filtered;
-});
+  return filtered.map((locker) => ({
+    ...locker,
+    label: `${locker.id} - ${locker.address}`,
+  }))
+})
 
 const getSizeBadgeColor = (size: string) => {
   switch (size) {
-    case "S":
-      return "blue";
-    case "M":
-      return "green";
-    case "L":
-      return "purple";
+    case 'S':
+      return 'info'
+    case 'M':
+      return 'success'
+    case 'L':
+      return 'warning'
     default:
-      return "gray";
+      return 'neutral'
   }
-};
+}
 
 const getStatusBadgeColor = (status: string) => {
   switch (status) {
-    case "free":
-      return "green";
-    case "occupied":
-      return "yellow";
-    case "repair":
-      return "red";
+    case 'free':
+      return 'success'
+    case 'occupied':
+      return 'warning'
+    case 'repair':
+      return 'error'
     default:
-      return "gray";
+      return 'neutral'
   }
-};
+}
 
 const getStatusLabel = (status: string) => {
   switch (status) {
-    case "free":
-      return "Free";
-    case "occupied":
-      return "Occupied";
-    case "repair":
-      return "In Repair";
+    case 'free':
+      return 'Free'
+    case 'occupied':
+      return 'Occupied'
+    case 'repair':
+      return 'In Repair'
     default:
-      return status;
+      return status
   }
-};
+}
 
-const openCellDetails = (cell: any) => {
-  selectedCell.value = cell;
-  isModalOpen.value = true;
-  console.log("[v0] Opening cell details:", cell);
-};
+const openCellDetails = (cell: Cell) => {
+  selectedCell.value = cell
+  isModalOpen.value = true
+  console.log('[v0] Opening cell details:', cell)
+}
 </script>

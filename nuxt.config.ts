@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ["@nuxt/eslint", "@nuxt/ui", "@nuxt/test-utils"],
+  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxt/test-utils'],
 
   devtools: {
     enabled: true,
@@ -8,25 +8,27 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      charset: "utf-8",
-      viewport: "width=device-width, initial-scale=1",
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
     },
   },
 
-  css: ["~/assets/css/main.css"],
+  css: ['~/assets/css/main.css'],
 
   routeRules: {
-    "/": { prerender: true },
+    '/': { prerender: true },
   },
 
-  compatibilityDate: "2025-01-15",
+  compatibilityDate: '2025-01-15',
 
   eslint: {
     config: {
       stylistic: {
-        commaDangle: "never",
-        braceStyle: "1tbs",
+        semi: true,
+        quotes: 'single',
+        commaDangle: 'always',
+        braceStyle: '1tbs',
       },
     },
   },
-});
+})

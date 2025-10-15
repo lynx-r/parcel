@@ -9,36 +9,49 @@
       </p>
     </header>
 
-    <div class="flex h-[calc(100vh-88px)]">
-      Main content area with resizable panels
+    <div class="flex h-[calc(100vh-88px)] flex-col">
+      <div>Main content area with resizable panels</div>
       <div class="flex-1 flex flex-col">
-        Top section: Role Interfaces (40%) and Parcel Lockers (25%)
-        <div class="flex flex-1 border-b border-gray-200">
-          Role Interfaces Panel (40%)
-          <div class="w-[40%] border-r border-gray-200 overflow-auto">
-            <RoleInterfacesPanel />
-          </div>
+        <div>Top section: Role Interfaces (40%) and Parcel Lockers (25%)</div>
+        <SplitWrapper
+          :sizes="[40, 25, 15, 20]"
+          class="flex flex-1 border-b border-gray-200 w-full"
+        >
+          <SplitItem>
+            <div>Role Interfaces Panel (40%)</div>
+            <div class="border-r border-gray-200 overflow-auto">
+              <RoleInterfacesPanel />
+            </div>
+          </SplitItem>
 
-          Parcel Lockers Panel (25%)
-          <div class="w-[25%] border-r border-gray-200 overflow-auto">
-            <ParcelLockersPanel />
-          </div>
+          <SplitItem class="flex flex-col">
+            <div>Parcel Lockers Panel (25%)</div>
+            <div class="border-r border-gray-200 overflow-auto">
+              <ParcelLockersPanel />
+            </div>
+          </SplitItem>
 
-          Test Queue Panel (15%)
-          <div class="w-[15%] border-r border-gray-200 overflow-auto">
-            <TestQueuePanel />
-          </div>
+          <SplitItem class="flex flex-col">
+            <div>Test Queue Panel (15%)</div>
+            <div class="border-r border-gray-200 overflow-auto">
+              <TestQueuePanel />
+            </div>
+          </SplitItem>
 
-          Logs Panel (20%)
-          <div class="w-[20%] overflow-auto">
-            <LogsPanel />
-          </div>
-        </div>
+          <SplitItem class="flex flex-col">
+            <div>Logs Panel (20%)</div>
+            <div class="overflow-auto">
+              <LogsPanel />
+            </div>
+          </SplitItem>
+        </SplitWrapper>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { SplitItem, SplitWrapper } from 'vue3-split'
+
 // Main dashboard layout
 </script>
