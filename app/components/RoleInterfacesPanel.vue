@@ -1,599 +1,254 @@
 <template>
-  <div class="h-full flex flex-col bg-white">
-    <div class="p-4 border-b border-gray-200">
-      <h2 class="text-lg font-semibold text-gray-900">Role Interfaces & FSM</h2>
+  <UCard>
+    <template #header>
+      <h3>Rolls & FSM Emulator</h3>
+    </template>
+    <div class="flex flex-col space-y-4 mb-4">
+      <URadioGroup
+        v-model="mode"
+        orientation="horizontal"
+        :items="[
+          { label: 'Create Test', value: 'create' },
+          { label: 'View Test', value: 'view' },
+        ]"
+      />
+      <USelect
+        v-if="mode === 'view'"
+        v-model="selectedTest"
+        :options="tests"
+        option-label="name"
+        option-value="id"
+        placeholder="Select Test"
+        class="w-64"
+        @update:model-value="loadTest"
+      />
+      <div v-if="mode === 'view'" class="flex flex-col space-y-2">
+        <UProgress :value="currentStep" :max="totalSteps" />
+        <div class="flex space-x-2">
+          <span>Step {{ currentStep }} of {{ totalSteps }}</span>
+          <UButton @click="prevStep">Previous</UButton>
+          <UButton @click="nextStep">Next</UButton>
+          <UButton @click="autoPlay">Auto Play</UButton>
+        </div>
+      </div>
     </div>
-    <div class="flex-1 overflow-auto">
-      <UTabs :items="tabs" class="w-full">
-        <!-- Client Tab -->
-        <template #client>
-          <div class="p-4 space-y-4">
-            <UForm :state="clientForm" class="space-y-3">
-              <UFormField label="Order ID">
-                <UInput
-                  v-model="clientForm.orderId"
-                  placeholder="Enter order ID"
-                />
-              </UFormField>
-
-              <UFormField label="Parcel Locker">
-                <USelect
-                  v-model="clientForm.lockerId"
-                  :options="lockerOptions"
-                />
-              </UFormField>
-
-              <UFormField label="Cell">
-                <USelect v-model="clientForm.cellId" :options="cellOptions" />
-              </UFormField>
-
-              <UFormField label="Order Status">
-                <USelect
-                  v-model="clientForm.orderStatus"
-                  :options="orderStatusOptions"
-                />
-              </UFormField>
-
-              <div class="flex gap-2">
-                <UButton
-                  color="primary"
-                  @click="handleClientAction('create_order')"
-                >
-                  Create Order
-                </UButton>
-                <UButton
-                  color="error"
-                  variant="outline"
-                  @click="handleClientAction('cancel_order')"
-                >
-                  Cancel Order
-                </UButton>
-              </div>
-            </UForm>
-          </div>
-        </template>
-
-        <!-- Recipient Tab -->
-        <template #recipient>
-          <div class="p-4 space-y-4">
-            <UForm :state="recipientForm" class="space-y-3">
-              <UFormField label="Order ID">
-                <UInput
-                  v-model="recipientForm.orderId"
-                  placeholder="Enter order ID"
-                />
-              </UFormField>
-
-              <UFormField label="Parcel Locker">
-                <USelect
-                  v-model="recipientForm.lockerId"
-                  :options="lockerOptions"
-                />
-              </UFormField>
-
-              <UFormField label="Cell">
-                <USelect
-                  v-model="recipientForm.cellId"
-                  :options="cellOptions"
-                />
-              </UFormField>
-
-              <div class="flex flex-col gap-2">
-                <UButton
-                  color="primary"
-                  @click="handleRecipientAction('pickup_from_locker')"
-                >
-                  Pickup from Parcel Locker
-                </UButton>
-                <UButton
-                  color="success"
-                  variant="outline"
-                  @click="handleRecipientAction('confirm_from_courier')"
-                >
-                  Confirm Receipt from Courier
-                </UButton>
-              </div>
-            </UForm>
-          </div>
-        </template>
-
-        <!-- City Courier Tab -->
-        <template #courier>
-          <div class="p-4 space-y-4">
-            <UForm :state="courierForm" class="space-y-3">
-              <UFormField label="Order ID">
-                <UInput
-                  v-model="courierForm.orderId"
-                  placeholder="Enter order ID"
-                />
-              </UFormField>
-
-              <UFormField label="Parcel Locker">
-                <USelect
-                  v-model="courierForm.lockerId"
-                  :options="lockerOptions"
-                />
-              </UFormField>
-
-              <UFormField label="Cell">
-                <USelect v-model="courierForm.cellId" :options="cellOptions" />
-              </UFormField>
-
-              <div class="grid grid-cols-2 gap-2">
-                <UButton
-                  color="primary"
-                  size="sm"
-                  @click="handleCourierAction('take_order')"
-                >
-                  Take Order
-                </UButton>
-                <UButton
-                  color="error"
-                  variant="outline"
-                  size="sm"
-                  @click="handleCourierAction('cancel_order')"
-                >
-                  Cancel Order
-                </UButton>
-                <UButton
-                  color="warning"
-                  variant="outline"
-                  size="sm"
-                  @click="handleCourierAction('mark_absent')"
-                >
-                  Mark Absent
-                </UButton>
-                <UButton
-                  color="success"
-                  size="sm"
-                  @click="handleCourierAction('place_in_cell')"
-                >
-                  Place in Cell
-                </UButton>
-                <UButton
-                  color="primary"
-                  size="sm"
-                  @click="handleCourierAction('take_from_cell')"
-                >
-                  Take from Cell
-                </UButton>
-              </div>
-            </UForm>
-          </div>
-        </template>
-
-        <!-- Driver Tab -->
-        <template #driver>
-          <div class="p-4 space-y-4">
-            <UForm :state="driverForm" class="space-y-3">
-              <UFormField label="Order IDs (comma-separated)">
-                <UInput v-model="driverForm.orderIds" placeholder="1,2,3" />
-              </UFormField>
-
-              <UFormField label="Parcel Locker">
-                <USelect
-                  v-model="driverForm.lockerId"
-                  :options="lockerOptions"
-                />
-              </UFormField>
-
-              <div class="grid grid-cols-2 gap-2">
-                <UButton
-                  color="primary"
-                  size="sm"
-                  @click="handleDriverAction('take_orders')"
-                >
-                  Take Orders
-                </UButton>
-                <UButton
-                  color="error"
-                  variant="outline"
-                  size="sm"
-                  @click="handleDriverAction('cancel_orders')"
-                >
-                  Cancel Orders
-                </UButton>
-                <UButton
-                  color="primary"
-                  size="sm"
-                  @click="handleDriverAction('pickup_all')"
-                >
-                  Pickup All from Locker
-                </UButton>
-                <UButton
-                  color="success"
-                  size="sm"
-                  @click="handleDriverAction('place_all')"
-                >
-                  Place All in Cells
-                </UButton>
-              </div>
-            </UForm>
-          </div>
-        </template>
-
-        <!-- Operator Tab -->
-        <template #operator>
-          <div class="p-4 space-y-4">
-            <UCard>
-              <div class="flex justify-between items-center">
-                <div>
-                  <p class="text-sm text-gray-600">Orders in Queue</p>
-                  <p class="text-2xl font-bold text-gray-900">
-                    {{ systemStats.ordersInQueue }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-sm text-gray-600">Lockers in Repair</p>
-                  <p class="text-2xl font-bold text-red-600">
-                    {{ systemStats.lockersInRepair }}
-                  </p>
-                </div>
-              </div>
-            </UCard>
-
-            <UForm :state="operatorForm" class="space-y-3">
-              <UFormField label="Order/Trip ID">
-                <UInput
-                  v-model="operatorForm.entityId"
-                  placeholder="Enter ID"
-                />
-              </UFormField>
-
-              <UFormField label="Courier ID">
-                <UInput
-                  v-model="operatorForm.courierId"
-                  placeholder="Enter courier ID"
-                />
-              </UFormField>
-
-              <UFormField label="Cell ID">
-                <UInput
-                  v-model="operatorForm.cellId"
-                  placeholder="Enter cell ID"
-                />
-              </UFormField>
-
-              <div class="grid grid-cols-2 gap-2">
-                <UButton
-                  color="primary"
-                  size="sm"
-                  @click="handleOperatorAction('assign_courier')"
-                >
-                  Assign Courier
-                </UButton>
-                <UButton
-                  color="error"
-                  variant="outline"
-                  size="sm"
-                  @click="handleOperatorAction('cancel_courier')"
-                >
-                  Cancel Courier
-                </UButton>
-                <UButton
-                  color="primary"
-                  size="sm"
-                  @click="handleOperatorAction('assign_trip')"
-                >
-                  Assign Trip
-                </UButton>
-                <UButton
-                  color="error"
-                  variant="outline"
-                  size="sm"
-                  @click="handleOperatorAction('cancel_trip')"
-                >
-                  Cancel Trip
-                </UButton>
-                <UButton
-                  color="success"
-                  size="sm"
-                  @click="handleOperatorAction('open_cell')"
-                >
-                  Open Cell
-                </UButton>
-                <UButton
-                  color="warning"
-                  variant="outline"
-                  size="sm"
-                  @click="handleOperatorAction('close_cell')"
-                >
-                  Close Cell
-                </UButton>
-                <UButton
-                  color="warning"
-                  size="sm"
-                  @click="handleOperatorAction('mark_repair')"
-                >
-                  Mark Repair
-                </UButton>
-              </div>
-            </UForm>
-          </div>
-        </template>
-
-        <!-- FSM Emulator Tab -->
-        <template #fsm>
-          <div class="p-4 space-y-4">
-            <div class="flex gap-2 mb-4">
-              <USelect
-                v-model="fsmFilters.entityType"
-                :options="entityTypeOptions"
-                placeholder="Filter by Entity Type"
-              />
-              <USelect
-                v-model="fsmFilters.state"
-                :options="stateOptions"
-                placeholder="Filter by State"
-              />
-            </div>
-
-            <UTable :rows="filteredFsmEntities" :columns="fsmColumns">
-              <template #actions-cell="{ row }">
-                <div class="flex gap-2 items-center">
-                  <USelect
-                    v-model="row.original.selectedAction"
-                    :options="getAvailableActions(row)"
-                    placeholder="Select action"
-                    size="sm"
-                  />
-                  <UButton
-                    color="primary"
-                    size="sm"
-                    @click="performFsmAction(row)"
-                  >
-                    Perform
-                  </UButton>
-                </div>
-              </template>
-            </UTable>
-          </div>
-        </template>
-      </UTabs>
+    <UTabs v-model="activeTab" :tabs="tabs" />
+    <div v-if="activeTab === 'client'">
+      <UInput v-model="orderId" placeholder="Order ID" class="mb-2" />
+      <UButton
+        :class="{ 'animate-pulse': highlightButton === 'create_order' }"
+        @click="performAction('create_order')"
+        >Create Order</UButton
+      >
+      <UButton
+        :class="{ 'animate-pulse': highlightButton === 'cancel_order' }"
+        @click="performAction('cancel_order')"
+        >Cancel Order</UButton
+      >
     </div>
-  </div>
+    <!-- Other tabs (Recipient, Courier, etc.) similar -->
+    <div v-if="activeTab === 'fsm'">
+      <div class="flex space-x-4 mb-4">
+        <USelect
+          v-model="filterEntityType"
+          :options="['all', 'order', 'stage_order', 'trip']"
+          placeholder="Filter by Entity Type"
+          @update:model-value="applyFilters"
+        />
+        <USelect
+          v-model="filterState"
+          :options="states"
+          placeholder="Filter by State"
+          @update:model-value="applyFilters"
+        />
+      </div>
+      <UTable
+        :columns="fsmHeaders"
+        :rows="filteredEntities"
+        @row-click="showHistory"
+      >
+        <template #actions="{ row }">
+          <USelect
+            v-model="row.selectedAction"
+            :options="row.available_actions"
+            :class="{
+              'animate-pulse': highlightButton === row.selectedAction,
+            }"
+            placeholder="Select Action"
+            class="w-40"
+          />
+          <UButton @click="performFsmAction(row)">Perform</UButton>
+        </template>
+      </UTable>
+      <UModal v-model="dialog">
+        <UCard>
+          <template #header>
+            <h3>
+              Action History for {{ selectedEntity.entity_type }} #{{
+                selectedEntity.entity_id
+              }}
+            </h3>
+          </template>
+          <UTable :columns="historyHeaders" :rows="actionHistory" />
+        </UCard>
+      </UModal>
+    </div>
+  </UCard>
 </template>
 
-<script setup lang="ts">
-import type { TableColumn, TabsItem } from '@nuxt/ui'
-import { computed, ref } from 'vue'
-import { useMockData } from '~/composables/useMockData'
+<script setup>
+const mode = ref('create')
+const selectedTest = ref(null)
+const tests = ref([]) // Mock: [{ id: 1, name: "Test 1", steps: [...] }, ...]
+const currentStep = ref(0)
+const totalSteps = ref(0)
+const testSteps = ref([])
+const highlightButton = ref(null)
+const activeTab = ref('client')
+const orderId = ref('')
+const filterEntityType = ref('all')
+const filterState = ref('all')
+const states = ['created', 'reserved', 'assigned', 'in_progress', 'completed']
+const dialog = ref(false)
+const selectedEntity = ref({})
+const actionHistory = ref([])
 
-const {
-  fsmStates,
-  fsmActions,
-  fsmTransitions,
-  orders,
-  stageOrders,
-  trips,
-  parcelLockers,
-} = useMockData()
-
-const tabs: TabsItem[] = [
-  { key: 'client', label: 'Client', slot: 'client' },
-  { key: 'recipient', label: 'Recipient', slot: 'recipient' },
-  { key: 'courier', label: 'City Courier', slot: 'courier' },
-  { key: 'driver', label: 'Driver', slot: 'driver' },
-  { key: 'operator', label: 'Operator', slot: 'operator' },
-  { key: 'fsm', label: 'FSM Emulator', slot: 'fsm' },
+const fsmHeaders = [
+  { key: 'entity_type', title: 'Entity Type' },
+  { key: 'entity_id', title: 'Entity ID' },
+  { key: 'current_state', title: 'Current State' },
+  { key: 'description', title: 'Description' },
+  { key: 'actions', title: 'Actions' },
 ]
 
-// Form states
-const clientForm = ref({
-  orderId: '',
-  lockerId: null,
-  cellId: null,
-  orderStatus: 'created',
-})
-
-const recipientForm = ref({
-  orderId: '',
-  lockerId: null,
-  cellId: null,
-})
-
-const courierForm = ref({
-  orderId: '',
-  lockerId: null,
-  cellId: null,
-})
-
-const driverForm = ref({
-  orderIds: '',
-  lockerId: null,
-})
-
-const operatorForm = ref({
-  entityId: '',
-  courierId: '',
-  cellId: '',
-})
-
-// Options
-const lockerOptions = parcelLockers.map((locker) => ({
-  label: `${locker.id} - ${locker.address}`,
-  value: locker.id,
-}))
-
-const cellOptions = computed(() => {
-  const allCells = parcelLockers.flatMap((locker) => locker.cells)
-  return allCells.map((cell) => ({
-    label: `Cell ${cell.number} (${cell.size}) - ${cell.status}`,
-    value: cell.id,
-  }))
-})
-
-const orderStatusOptions = [
-  { label: 'Created', value: 'created' },
-  { label: 'In Delivery', value: 'in_progress' },
-  { label: 'Delivered', value: 'completed' },
-  { label: 'Cancelled', value: 'cancelled' },
+const historyHeaders = [
+  { key: 'action_name', title: 'Action' },
+  { key: 'from_state', title: 'From State' },
+  { key: 'to_state', title: 'To State' },
+  { key: 'created_at', title: 'Time' },
 ]
 
-const systemStats = ref({
-  ordersInQueue: 12,
-  lockersInRepair: 2,
-})
+const entities = ref([
+  {
+    entity_type: 'order',
+    entity_id: 1,
+    current_state: 'created',
+    description: 'Order 1',
+    available_actions: ['reserve_cell'],
+    selectedAction: null,
+  },
+  // Mock data...
+])
 
-// Action handlers
-const handleClientAction = (action: string) => {
-  console.log('[v0] Client action:', {
-    action,
-    orderId: clientForm.value.orderId,
-    lockerId: clientForm.value.lockerId,
-    role: 'client',
-  })
-  // REST API stub: POST /order/create or PUT /order/cancel
-}
+const filteredEntities = computed(() =>
+  entities.value.filter(
+    (entity) =>
+      (filterEntityType.value === 'all' ||
+        entity.entity_type === filterEntityType.value) &&
+      (filterState.value === 'all' ||
+        entity.current_state === filterState.value),
+  ),
+)
 
-const handleRecipientAction = (action: string) => {
-  console.log('[v0] Recipient action:', {
-    action,
-    orderId: recipientForm.value.orderId,
-    lockerId: recipientForm.value.lockerId,
-    cellId: recipientForm.value.cellId,
-    role: 'recipient',
-  })
-  // REST API stub: POST /recipient/pickup or POST /recipient/confirm
-}
-
-const handleCourierAction = (action: string) => {
-  console.log('[v0] Courier action:', {
-    action,
-    orderId: courierForm.value.orderId,
-    lockerId: courierForm.value.lockerId,
-    cellId: courierForm.value.cellId,
-    role: 'courier',
-  })
-  // REST API stub: POST /courier/{action}
-}
-
-const handleDriverAction = (action: string) => {
-  console.log('[v0] Driver action:', {
-    action,
-    orderIds: driverForm.value.orderIds,
-    lockerId: driverForm.value.lockerId,
-    role: 'driver',
-  })
-  // REST API stub: POST /driver/{action}
-}
-
-const handleOperatorAction = (action: string) => {
-  console.log('[v0] Operator action:', {
-    action,
-    entityId: operatorForm.value.entityId,
-    courierId: operatorForm.value.courierId,
-    cellId: operatorForm.value.cellId,
-    role: 'operator',
-  })
-  // REST API stub: POST /operator/{action}
-}
-
-// FSM Emulator
-const fsmFilters = ref({
-  entityType: null,
-  state: null,
-})
-
-const entityTypeOptions = [
-  { label: 'Order', value: 'order' },
-  { label: 'Stage Order', value: 'stage_order' },
-  { label: 'Trip', value: 'trip' },
+const tabs = [
+  { name: 'Client', value: 'client' },
+  { name: 'Recipient', value: 'recipient' },
+  { name: 'Courier', value: 'courier' },
+  { name: 'Driver', value: 'driver' },
+  { name: 'Operator', value: 'operator' },
+  { name: 'FSM Emulator', value: 'fsm' },
 ]
 
-const stateOptions = fsmStates.map((state) => ({
-  label: state.label,
-  value: state.name,
-}))
+async function applyFilters() {
+  const { data } = await useFetch('/fsm/entities', {
+    query: { entity_type: filterEntityType.value, state: filterState.value },
+  })
+  entities.value = data.value || []
+}
 
-const fsmColumns: TableColumn<never>[] = [
-  { accessorKey: 'entity_type', header: 'Entity Type' },
-  { accessorKey: 'entity_id', header: 'Entity ID' },
-  { accessorKey: 'current_state', header: 'Current State' },
-  { accessorKey: 'description', header: 'Description' },
-  { accessorKey: 'actions', header: 'Actions' },
-]
-
-const allFsmEntities = computed(() => {
-  const entities = []
-
-  orders.forEach((order) => {
-    entities.push({
-      entity_type: 'order',
-      entity_id: order.id,
-      current_state: order.status,
-      description: order.description,
-      selectedAction: null,
+async function performAction(action) {
+  if (mode.value === 'create') {
+    const { data } = await useFetch('/action', {
+      method: 'POST',
+      body: { action, order_id: orderId.value },
     })
-  })
-
-  stageOrders.forEach((stageOrder) => {
-    entities.push({
-      entity_type: 'stage_order',
-      entity_id: stageOrder.id,
-      current_state: stageOrder.status,
-      description: stageOrder.description,
-      selectedAction: null,
-    })
-  })
-
-  trips.forEach((trip) => {
-    entities.push({
-      entity_type: 'trip',
-      entity_id: trip.id,
-      current_state: trip.status,
-      description: trip.description,
-      selectedAction: null,
-    })
-  })
-
-  return entities
-})
-
-const filteredFsmEntities = computed(() => {
-  let filtered = allFsmEntities.value
-
-  if (fsmFilters.value.entityType) {
-    filtered = filtered.filter(
-      (e) => e.entity_type === fsmFilters.value.entityType,
-    )
+    console.log(data.value)
+    // Emit to parent for test creation
+    emit('add-test-step', { action, order_id: orderId.value })
   }
+}
 
-  if (fsmFilters.value.state) {
-    filtered = filtered.filter(
-      (e) => e.current_state === fsmFilters.value.state,
-    )
-  }
-
-  return filtered
-})
-
-const getAvailableActions = (row: any) => {
-  const currentState = fsmStates.find((s) => s.name === row.current_state)
-  if (!currentState) return []
-
-  const availableTransitions = fsmTransitions.filter(
-    (t) => t.from_state_id === currentState.id,
-  )
-  const actions = availableTransitions
-    .map((t) => {
-      const action = fsmActions.find((a) => a.id === t.action_id)
-      return action ? { label: action.label, value: action.name } : null
+async function performFsmAction(row) {
+  if (mode.value === 'create') {
+    const { data } = await useFetch('/fsm/perform', {
+      method: 'POST',
+      body: {
+        entity_type: row.entity_type,
+        entity_id: row.entity_id,
+        action_name: row.selectedAction,
+        user_id: 100,
+      },
     })
-    .filter(Boolean)
-
-  return actions
+    console.log(data.value)
+    emit('add-test-step', {
+      entity_type: row.entity_type,
+      entity_id: row.entity_id,
+      action_name: row.selectedAction,
+    })
+    await applyFilters()
+  }
 }
 
-const performFsmAction = (row: any) => {
-  if (!row.selectedAction) return
+async function loadTest(testId) {
+  const { data } = await useFetch(`/tests/${testId}`)
+  testSteps.value = data.value.steps || []
+  totalSteps.value = testSteps.value.length
+  currentStep.value = 0
+  playStep()
+}
 
-  console.log('[v0] FSM action:', {
-    entity_type: row.entity_type,
-    entity_id: row.entity_id,
-    action_name: row.selectedAction,
-    user_id: 100,
+function playStep() {
+  if (currentStep.value < totalSteps.value) {
+    const step = testSteps.value[currentStep.value]
+    highlightButton.value = step.action_name || step.action
+    setTimeout(() => (highlightButton.value = null), 1000) // Pulse for 1s
+  }
+}
+
+function prevStep() {
+  if (currentStep.value > 0) {
+    currentStep.value--
+    playStep()
+  }
+}
+
+function nextStep() {
+  if (currentStep.value < totalSteps.value - 1) {
+    currentStep.value++
+    playStep()
+  }
+}
+
+function autoPlay() {
+  const interval = setInterval(() => {
+    if (currentStep.value < totalSteps.value - 1) {
+      nextStep()
+    } else {
+      clearInterval(interval)
+    }
+  }, 2000)
+}
+
+async function showHistory(row) {
+  selectedEntity.value = row
+  const { data } = await useFetch('/fsm/logs', {
+    query: { entity_type: row.entity_type, entity_id: row.entity_id },
   })
-  // REST API stub: POST /fsm/perform
+  actionHistory.value = data.value || []
+  dialog.value = true
 }
+
+onMounted(() => {
+  applyFilters()
+})
 </script>
