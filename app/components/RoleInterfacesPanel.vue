@@ -33,12 +33,7 @@
     </div>
     <UTabs v-model="activeTab" :items="tabs">
       <template #client>
-        <UInput v-model="orderId" placeholder="User" class="mr-2" />
-        <UButton
-          :class="{ 'animate-pulse': highlightButton === 'create_order' }"
-          @click="performAction('create_order')"
-          >Create Order</UButton
-        >
+        <ClientForm />
       </template>
       <template #recipient>
         <div class="p-4 space-y-4">
