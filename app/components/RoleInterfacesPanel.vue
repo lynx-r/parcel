@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    <UTabs v-model="activeTab" :tabs="tabs" />
+    <UTabs v-model="activeTab" :items="tabs" />
     <div v-if="activeTab === 'client'">
       <UInput v-model="orderId" placeholder="Order ID" class="mb-2" />
       <UButton
@@ -151,12 +151,12 @@ const filteredEntities = computed(() =>
 )
 
 const tabs = [
-  { name: 'Client', value: 'client' },
-  { name: 'Recipient', value: 'recipient' },
-  { name: 'Courier', value: 'courier' },
-  { name: 'Driver', value: 'driver' },
-  { name: 'Operator', value: 'operator' },
-  { name: 'FSM Emulator', value: 'fsm' },
+  { label: 'Client', value: 'client' },
+  { label: 'Recipient', value: 'recipient' },
+  { label: 'Courier', value: 'courier' },
+  { label: 'Driver', value: 'driver' },
+  { label: 'Operator', value: 'operator' },
+  { label: 'FSM Emulator', value: 'fsm' },
 ]
 
 async function applyFilters() {
