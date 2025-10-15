@@ -1,8 +1,5 @@
 <template>
   <UCard>
-    <template #header>
-      <h3>Rolls & FSM Emulator</h3>
-    </template>
     <div class="flex flex-col space-y-4 mb-4">
       <URadioGroup
         v-model="mode"
@@ -23,12 +20,14 @@
         @update:model-value="loadTest"
       />
       <div v-if="mode === 'view'" class="flex flex-col space-y-2">
+        <h3>Rolls & FSM Emulator</h3>
         <UProgress :value="currentStep" :max="totalSteps" />
         <div class="flex space-x-2">
           <span>Step {{ currentStep }} of {{ totalSteps }}</span>
           <UButton @click="prevStep">Previous</UButton>
           <UButton @click="nextStep">Next</UButton>
           <UButton @click="autoPlay">Auto Play</UButton>
+          <USelect v-model="intervalBetweenSteps" :items="stepIntervals" />
         </div>
       </div>
     </div>
@@ -151,6 +150,7 @@ const selectedTest = ref('1')
 const tests = ref([]) // Mock: [{ id: 1, name: "Test 1", steps: [...] }, ...]
 const totalSteps = ref(0)
 const currentStep = ref(0)
+const intervalBetweenSteps = ref(5)
 const testSteps = ref([])
 const highlightButton = ref(null)
 const activeTab = ref('client')
@@ -195,6 +195,13 @@ async function applyFilters() {
 //   cellId: null,
 //   orderStatus: 'created',
 // })
+const stepIntervals = [
+  [
+    { label: '5 сек', value: 5 },
+    { label: '10 сек', value: 10 },
+    { label: '30 сек', value: 30 },
+  ],
+]
 
 const lockerOptions = parcelLockers.map((locker) => ({
   label: `${locker.id} - ${locker.address}`,
