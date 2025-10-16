@@ -74,6 +74,9 @@
           </UForm>
         </div>
       </template>
+      <template #operator>
+        <OperatorForm />
+      </template>
       <template #fsm>
         <div class="flex space-x-4 mb-4">
           <USelect
@@ -148,7 +151,9 @@ const currentStep = ref(0)
 const intervalBetweenSteps = ref(5)
 const testSteps = ref([])
 const highlightButton = ref(null)
-const activeTab = ref('client')
+const router = useRouter()
+const route = useRoute()
+
 const orderId = ref('')
 const filterEntityType = ref('all')
 const filterState = ref('all')
@@ -175,6 +180,20 @@ const tabs: TabsItem[] = [
   { value: 'operator', label: 'Operator', slot: 'operator' },
   { value: 'fsm', label: 'FSM Emulator', slot: 'fsm' },
 ]
+
+const activeTab = computed({
+  get() {
+    return route.query.tab || 'client'
+  },
+  set(tab) {
+    // Hash is specified here to prevent the page from scrolling to the top
+    router.push({
+      path: '/',
+      query: { tab },
+      // hash: '#control-active-item',
+    })
+  },
+})
 
 async function applyFilters() {
   const { data } = await useFetch('/fsm/entities', {
