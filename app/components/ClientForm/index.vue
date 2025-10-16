@@ -29,8 +29,8 @@
         v-show="state.shipment.type === 'letter'"
         v-model="state.letterValue"
       />
-      <GeneralComments v-model="state" />
-      <PaymentCard v-model="state" />
+      <!-- <GeneralComments v-model="state" /> -->
+      <!-- <PaymentCard v-model="state" /> -->
       <UButton
         class="flex justify-center"
         icon="i-lucide-credit-card"
@@ -48,9 +48,7 @@ import { initialOrder } from '~/stores/useClientOrdersStore'
 import orderFormSchema, {
   type TOrder,
 } from '~~/shared/utils/validators/orderFormSchema'
-import GeneralComments from './GeneralComments.vue'
 import PackageDetails from './PackageDetails.vue'
-import PaymentCard from './PaymentCard.vue'
 import ShipmentDetails from './ShipmentDetails/index.vue'
 import LetterDetails from './ShipmentDetails/LetterDetails.vue'
 import UserInformation from './UserInformation.vue'

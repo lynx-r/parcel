@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL") // Задай переменную окружения в .env
+}
+
+model FsmState {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  label String?
+
+  transitionsFrom FsmTransition[] @relation("FromState")
+  transitionsTo   FsmTransition[] @relation("ToState")
+}
+
+model FsmAction {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  label String?
+
+  transitions FsmTransition[]
+}
+
+model FsmTransition {
+  id          Int @id @default(autoincrement())
+  fromStateId Int
+  actionId    Int
+  toStateId   Int
+
+  fromState FsmState  @relation("FromState", fields: [fromStateId], references: [id])
+  toState   FsmState  @relation("ToState", fields: [toStateId], references: [id])
+  action    FsmAction @relation(fields: [actionId], references: [id])
+}
+
+model FsmActionLog {
+  id         Int      @id @default(autoincrement())
+  entityType String
+  entityId   Int
+  actionName String
+  fromState  String
+  toState    String
+  userId     Int
+  createdAt  DateTime @default(now())
+}
+
+model FsmErrorLog {
+  id           Int      @id @default(autoincrement())
+  errorTime    DateTime @default(now())
+  errorMessage String
+  entityType   String
+  entityId     Int
+  actionName   String
+  userId       Int
+}
+
+model Order {
+  id          Int     @id @default(autoincrement())
+  status      String
+  description String?
+}
+
+model StageOrder {
+  id          Int     @id @default(autoincrement())
+  status      String
+  description String?
+}
+
+model Trip {
+  id          Int     @id @default(autoincrement())
+  status      String
+  description String?
+}

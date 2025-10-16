@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxt/test-utils',
     '@vueuse/nuxt',
+    '@prisma/nuxt',
   ],
 
   // app: {
