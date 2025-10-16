@@ -7,6 +7,8 @@ const userSchema = z.object({
   // добавьте другие поля интерфейса IUser
 })
 
+export type TUser = z.output<typeof userSchema>
+
 const packageSchema = z.object({
   width: z.number().positive(),
   depth: z.number().positive(),
