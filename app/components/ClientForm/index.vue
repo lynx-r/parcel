@@ -20,8 +20,15 @@
         title="Информация получателя"
         type="recipient"
       />
-      <ShipmentDetails v-model="state" />
-      <PackageDetails v-model="state" />
+      <ShipmentDetails v-model="state.shipment" />
+      <PackageDetails
+        v-show="state.shipment.type === 'package'"
+        v-model="state.package"
+      />
+      <LetterDetails
+        v-show="state.shipment.type === 'letter'"
+        v-model="state.letterValue"
+      />
       <GeneralComments v-model="state" />
       <PaymentCard v-model="state" />
       <UButton
@@ -37,19 +44,24 @@
 
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
-import type z from 'zod'
 import { initialOrder } from '~/stores/useClientOrdersStore'
-import orderFormSchema from '~~/shared/utils/validators/orderFormSchema'
+import orderFormSchema, {
+  type TOrder,
+} from '~~/shared/utils/validators/orderFormSchema'
+import GeneralComments from './GeneralComments.vue'
+import PackageDetails from './PackageDetails.vue'
+import PaymentCard from './PaymentCard.vue'
+import ShipmentDetails from './ShipmentDetails/index.vue'
+import LetterDetails from './ShipmentDetails/LetterDetails.vue'
+import UserInformation from './UserInformation.vue'
 
 const { createOrder } = useClientOrdersStore()
 
-type Schema = z.output<typeof orderFormSchema>
-
-const state = reactive<Schema>(initialOrder())
+const state = reactive<TOrder>(initialOrder())
 
 const router = useRouter()
 const toast = useToast()
-function onSubmitOrder(event: FormSubmitEvent<Schema>) {
+function onSubmitOrder(event: FormSubmitEvent<TOrder>) {
   toast.add({
     title: 'Success',
     description: 'The form has been submitted.',

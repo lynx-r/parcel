@@ -8,16 +8,23 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
   ],
 
-  devtools: {
-    enabled: true,
-  },
-
   // app: {
   //   head: {
   //     charset: 'utf-8',
   //     viewport: 'width=device-width, initial-scale=1',
   //   },
   // },
+
+  // components: [
+  //   {
+  //     path: '~/components',
+  //     pathPrefix: false,
+  //   },
+  // ],
+
+  devtools: {
+    enabled: true,
+  },
 
   css: ['~/assets/css/main.css'],
 

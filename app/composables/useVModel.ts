@@ -1,14 +1,14 @@
 // useVModel.ts
 import { ref, watch } from 'vue'
 
-export function useVModel(props: any, emit: any, name = 'modelValue') {
-  const innerValue = ref(props[name])
+export function useVModel<T>(props: { modelValue: T }, emit: any) {
+  const innerValue = ref(props['modelValue'])
 
   watch(
-    () => props[name],
+    () => props['modelValue'],
     (val) => (innerValue.value = val),
   )
-  watch(innerValue, (val) => emit(`update:${name}`, val))
+  watch(innerValue, (val) => emit(`update:modelValue`, val))
 
   return innerValue
 }

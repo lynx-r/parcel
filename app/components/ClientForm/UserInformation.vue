@@ -14,10 +14,10 @@ const localUser = useVModelObject(props, emit)
   <div>
     <h3 class="text-xl font-bold">{{ title }}</h3>
     <div class="flex justify-between gap-4">
-      <UFormField label="Имя" :name="`${type}Name`" class="w-full">
+      <UFormField label="Имя" :name="`${type}.name`" class="w-full">
         <UInput v-model="localUser.name" required class="w-full" />
       </UFormField>
-      <UFormField label="Телефон" :name="`${type}Phone`" class="w-full">
+      <UFormField label="Телефон" :name="`${type}.phone`" class="w-full">
         <UInput v-model="localUser.phone" required class="w-full" />
       </UFormField>
     </div>

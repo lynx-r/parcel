@@ -14,7 +14,9 @@ const packageSchema = z.object({
   depth: z.number().positive(),
   height: z.number().positive(),
   weight: z.number().positive(),
+  value: z.number().positive(),
 })
+export type TPackage = z.output<typeof packageSchema>
 
 const commentsSchema = z.object({
   fragile: z.boolean(),
@@ -26,16 +28,30 @@ const commentsSchema = z.object({
   comment: z.string(),
 })
 
+const logisticOptionsSchema = z.enum(['parcel', 'courier'])
+
+const logisticSchema = z.object({
+  type: logisticOptionsSchema,
+  cell: z.string(),
+  address: z.string().optional().nullable(),
+})
+
+export type TLogistic = z.output<typeof logisticSchema>
+
+const shipmentSchema = z.object({
+  type: z.enum(['package', 'letter']),
+  delivery: logisticSchema,
+  pickup: logisticSchema,
+})
+
+export type TShipment = z.output<typeof shipmentSchema>
+
 const orderFormSchema = z.object({
   sender: userSchema,
   recipient: userSchema,
-  typeOfShipment: z.enum(['package', 'letter']),
-  typeOfDelivery: z.enum(['pickup-point', 'letterCourier']),
-  typeOfReceiving: z.enum(['pickup-point', 'letterCourier']),
-  sendCell: z.string(),
-  receiveCell: z.string(),
+  shipment: shipmentSchema,
   package: packageSchema,
-  packageValue: z.number().positive(),
+  letterValue: z.number().positive(),
   comments: commentsSchema,
   paymentType: z.enum(['ya', 'sbp']),
 })

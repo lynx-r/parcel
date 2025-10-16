@@ -1,11 +1,14 @@
 // composables/useVModelObject.ts
 import { reactive, watch } from 'vue'
 
-export function useVModelObject(props: any, emit: any, name = 'modelValue') {
-  const local = reactive({ ...props[name] })
+export function useVModelObject<T extends object>(
+  props: { modelValue: T },
+  emit: any,
+) {
+  const local = reactive({ ...props['modelValue'] })
 
   watch(
-    () => props[name],
+    () => props['modelValue'],
     (newVal) => {
       Object.assign(local, newVal)
     },
@@ -14,7 +17,7 @@ export function useVModelObject(props: any, emit: any, name = 'modelValue') {
   watch(
     local,
     (newVal) => {
-      emit(`update:${name}`, { ...newVal })
+      emit('update:modelValue', { ...newVal })
     },
     { deep: true },
   )

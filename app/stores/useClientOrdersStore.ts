@@ -10,18 +10,25 @@ export const initialOrder = (): TOrder => ({
     name: '',
     phone: '',
   },
-  typeOfShipment: 'package',
-  typeOfDelivery: 'pickup-point',
-  typeOfReceiving: 'pickup-point',
-  sendCell: '',
-  receiveCell: '',
+  shipment: {
+    pickup: {
+      type: 'parcel',
+      cell: '',
+    },
+    delivery: {
+      type: 'parcel',
+      cell: '',
+    },
+    type: 'package',
+  },
+  letterValue: 0,
   package: {
     width: 0,
     depth: 0,
     height: 0,
     weight: 0,
+    value: 0,
   },
-  packageValue: 0,
   comments: {
     fragile: false,
     protectFromMoisture: false,

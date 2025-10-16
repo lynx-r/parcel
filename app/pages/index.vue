@@ -1,9 +1,9 @@
 <template>
-  <SplitWrapper :sizes="[40, 25, 15, 20]" class="flex">
+  <SplitWrapper :sizes="[100]" class="flex">
     <SplitItem>
       <RoleInterfacesPanel />
     </SplitItem>
-
+    <!-- 
     <SplitItem>
       <ParcelLockersPanel />
     </SplitItem>
@@ -14,7 +14,7 @@
 
     <SplitItem>
       <LogsPanel />
-    </SplitItem>
+    </SplitItem> -->
   </SplitWrapper>
 </template>
 
