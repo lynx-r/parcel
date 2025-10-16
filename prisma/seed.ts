@@ -31,24 +31,25 @@ async function main() {
   await prisma.fsmTransition.createMany({
     data: [
       {
-        fromStateId: states.find((state) => state.name === 'created').id,
-        actionId: actions.find((action) => action.name === 'reserve_cell').id,
-        toStateId: states.find((state) => state.name === 'reserved').id,
+        from_state_id: states.find((state) => state.name === 'created').id,
+        action_id: actions.find((action) => action.name === 'reserve_cell').id,
+        to_state_id: states.find((state) => state.name === 'reserved').id,
       },
       {
-        fromStateId: states.find((state) => state.name === 'reserved').id,
-        actionId: actions.find((action) => action.name === 'assign_courier').id,
-        toStateId: states.find((state) => state.name === 'assigned').id,
+        from_state_id: states.find((state) => state.name === 'reserved').id,
+        action_id: actions.find((action) => action.name === 'assign_courier')
+          .id,
+        to_state_id: states.find((state) => state.name === 'assigned').id,
       },
       {
-        fromStateId: states.find((state) => state.name === 'assigned').id,
-        actionId: actions.find((action) => action.name === 'start_trip').id,
-        toStateId: states.find((state) => state.name === 'in_progress').id,
+        from_state_id: states.find((state) => state.name === 'assigned').id,
+        action_id: actions.find((action) => action.name === 'start_trip').id,
+        to_state_id: states.find((state) => state.name === 'in_progress').id,
       },
       {
-        fromStateId: states.find((state) => state.name === 'in_progress').id,
-        actionId: actions.find((action) => action.name === 'complete_trip').id,
-        toStateId: states.find((state) => state.name === 'completed').id,
+        from_state_id: states.find((state) => state.name === 'in_progress').id,
+        action_id: actions.find((action) => action.name === 'complete_trip').id,
+        to_state_id: states.find((state) => state.name === 'completed').id,
       },
     ],
   })

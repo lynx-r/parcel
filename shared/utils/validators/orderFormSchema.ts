@@ -55,13 +55,13 @@ const orderFormSchema = z.object({
     'completed',
   ]),
   description: z.string(),
-  sender: userSchema,
-  recipient: userSchema,
-  shipment: shipmentSchema,
-  package: packageSchema.optional(),
-  letterValue: z.number().positive().optional(),
-  comments: commentsSchema,
-  paymentType: z.enum(['ya', 'sbp']),
+  // sender: userSchema.optional(),
+  // recipient: userSchema.optional(),
+  // shipment: shipmentSchema,
+  // package: packageSchema.optional(),
+  // letterValue: z.number().positive().optional(),
+  // comments: commentsSchema,
+  // paymentType: z.enum(['ya', 'sbp']),
 })
 
 export type TOrder = z.output<typeof orderFormSchema>

@@ -60,7 +60,7 @@ const useClientOrdersStore = defineStore('clientOrders', () => {
 
     // orders.value.push(order)
     orders.value.push(order)
-    const res = useFetch('/order', { method: 'POST', body: order })
+    const res = useFetch('/api/order', { method: 'POST', body: order })
     console.log(res)
 
     console.log(orders.value)
