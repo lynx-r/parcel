@@ -12,8 +12,10 @@ model FsmState {
   name  String  @unique
   label String?
 
-  transitionsFrom FsmTransition[] @relation("FromState")
-  transitionsTo   FsmTransition[] @relation("ToState")
+  transitions_from FsmTransition[] @relation("FromState")
+  transitions_to   FsmTransition[] @relation("ToState")
+
+  @@map("fsm_states")
 }
 
 model FsmAction {
@@ -22,54 +24,68 @@ model FsmAction {
   label String?
 
   transitions FsmTransition[]
+
+  @@map("fsm_actions")
 }
 
 model FsmTransition {
-  id          Int @id @default(autoincrement())
-  fromStateId Int
-  actionId    Int
-  toStateId   Int
+  id            Int @id @default(autoincrement())
+  from_state_id Int
+  action_id     Int
+  to_state_id   Int
 
-  fromState FsmState  @relation("FromState", fields: [fromStateId], references: [id])
-  toState   FsmState  @relation("ToState", fields: [toStateId], references: [id])
-  action    FsmAction @relation(fields: [actionId], references: [id])
+  from_state FsmState  @relation("FromState", fields: [from_state_id], references: [id])
+  to_state   FsmState  @relation("ToState", fields: [to_state_id], references: [id])
+  action     FsmAction @relation(fields: [action_id], references: [id])
+
+  @@map("fsm_transitions")
 }
 
 model FsmActionLog {
-  id         Int      @id @default(autoincrement())
-  entityType String
-  entityId   Int
-  actionName String
-  fromState  String
-  toState    String
-  userId     Int
-  createdAt  DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  entity_type String
+  entity_id   Int
+  action_name String
+  from_state  String
+  to_state    String
+  user_id     Int
+  created_at  DateTime @default(now())
+
+  @@map("fsm_action_logs")
 }
 
 model FsmErrorLog {
-  id           Int      @id @default(autoincrement())
-  errorTime    DateTime @default(now())
-  errorMessage String
-  entityType   String
-  entityId     Int
-  actionName   String
-  userId       Int
+  id            Int      @id @default(autoincrement())
+  error_time    DateTime @default(now())
+  error_message String
+  entity_type   String
+  entity_id     Int
+  action_name   String
+  user_id       Int
+
+  @@map("fsm_errors_log")
 }
 
 model Order {
   id          Int     @id @default(autoincrement())
   status      String
   description String?
+
+  @@map("orders")
 }
 
 model StageOrder {
   id          Int     @id @default(autoincrement())
   status      String
   description String?
+
+  @@map("stage_orders")
 }
 
 model Trip {
   id          Int     @id @default(autoincrement())
   status      String
   description String?
+
+  @@map("trips")
 }

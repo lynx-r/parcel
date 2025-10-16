@@ -17,6 +17,6 @@ const state = useVModel(props, emit)
         class="w-full"
       />
     </UFormField>
-    <UCheckbox label="Добавить страховку (2% от ценности)" />
+    <!-- <UCheckbox label="Добавить страховку (2% от ценности)" /> -->
   </div>
 </template>

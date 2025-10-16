@@ -47,11 +47,19 @@ const shipmentSchema = z.object({
 export type TShipment = z.output<typeof shipmentSchema>
 
 const orderFormSchema = z.object({
+  status: z.enum([
+    'created',
+    'reserved',
+    'assigned',
+    'in_progress',
+    'completed',
+  ]),
+  description: z.string(),
   sender: userSchema,
   recipient: userSchema,
   shipment: shipmentSchema,
-  package: packageSchema,
-  letterValue: z.number().positive(),
+  package: packageSchema.optional(),
+  letterValue: z.number().positive().optional(),
   comments: commentsSchema,
   paymentType: z.enum(['ya', 'sbp']),
 })

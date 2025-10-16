@@ -9,6 +9,7 @@ const availableCells = ref([
 
 const props = defineProps<{
   modelValue: TLogistic
+  shipment: 'delivery' | 'pickup'
 }>()
 const emit = defineEmits(['update:modelValue'])
 const state = useVModelObject(props, emit)
@@ -16,7 +17,7 @@ const state = useVModelObject(props, emit)
 
 <template>
   <div class="flex flex-col gap-2">
-    <UFormField label="Тип получения" name="typeOfSend" class="w-full">
+    <UFormField label="Тип получения" :name="`${shipment}.type`" class="w-full">
       <USelect
         v-model="state.type"
         :items="[
@@ -30,7 +31,7 @@ const state = useVModelObject(props, emit)
     <UFormField
       v-show="state.type === 'parcel'"
       label="Постомат отправки"
-      name="sendCell"
+      :name="`${shipment}.cell`"
       class="w-full"
     >
       <USelect
@@ -43,7 +44,7 @@ const state = useVModelObject(props, emit)
     <UFormField
       v-show="state.type === 'courier'"
       label="Адресс отправки"
-      name="sendAddress"
+      :name="`${shipment}.address`"
       class="w-full"
     >
       <UInput v-model="state.address" />

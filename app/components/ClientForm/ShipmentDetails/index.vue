@@ -12,7 +12,7 @@ const state = useVModelObject(props, emit)
 <template>
   <div>
     <h3 class="text-xl font-bold">Детали доставки</h3>
-    <UFormField label="Тип отправления" name="typeOfShipment" class="w-full">
+    <UFormField label="Тип отправления" name="shipment.type" class="w-full">
       <USelect
         v-model="state.type"
         :items="[
@@ -24,8 +24,8 @@ const state = useVModelObject(props, emit)
       />
     </UFormField>
     <div class="flex gap-4">
-      <Shipment v-model="state.delivery" />
-      <Shipment v-model="state.pickup" />
+      <Shipment v-model="state.delivery" shipment="delivery" />
+      <Shipment v-model="state.pickup" shipment="pickup" />
     </div>
   </div>
 </template>

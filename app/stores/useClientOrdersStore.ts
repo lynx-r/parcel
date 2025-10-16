@@ -21,7 +21,7 @@ export const initialOrder = (): TOrder => ({
     },
     type: 'package',
   },
-  letterValue: 0,
+  letterValue: undefined,
   package: {
     width: 0,
     depth: 0,
@@ -38,6 +38,8 @@ export const initialOrder = (): TOrder => ({
     notRotate: false,
     urgentDelivery: false,
   },
+  status: 'created',
+  description: '',
   paymentType: 'ya',
 })
 
@@ -46,10 +48,20 @@ const useClientOrdersStore = defineStore('clientOrders', () => {
   const orders = useLocalStorage<TOrder[]>('pinia/client-orders', [])
 
   // const orders = ref<TOrder[]>([])
+  // const router = useRouter()
+  const toast = useToast()
 
   function createOrder(order: TOrder) {
+    toast.add({
+      title: 'Success',
+      description: 'The form has been submitted.',
+      color: 'success',
+    })
+
     // orders.value.push(order)
     orders.value.push(order)
+    const res = useFetch('/order', { method: 'POST', body: order })
+    console.log(res)
 
     console.log(orders.value)
   }

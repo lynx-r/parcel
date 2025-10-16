@@ -21,14 +21,18 @@
         type="recipient"
       />
       <ShipmentDetails v-model="state.shipment" />
-      <PackageDetails
-        v-show="state.shipment.type === 'package'"
-        v-model="state.package"
-      />
-      <LetterDetails
-        v-show="state.shipment.type === 'letter'"
-        v-model="state.letterValue"
-      />
+      <template v-if="state.package">
+        <PackageDetails
+          v-show="state.shipment.type === 'package'"
+          v-model="state.package"
+        />
+      </template>
+      <template v-if="state.letterValue">
+        <LetterDetails
+          v-show="state.shipment.type === 'letter'"
+          v-model="state.letterValue"
+        />
+      </template>
       <!-- <GeneralComments v-model="state" /> -->
       <!-- <PaymentCard v-model="state" /> -->
       <UButton
@@ -45,9 +49,8 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { initialOrder } from '~/stores/useClientOrdersStore'
-import orderFormSchema, {
-  type TOrder,
-} from '~~/shared/utils/validators/orderFormSchema'
+import type { TOrder } from '~~/shared/utils/validators/orderFormSchema'
+import orderFormSchema from '~~/shared/utils/validators/orderFormSchema'
 import PackageDetails from './PackageDetails.vue'
 import ShipmentDetails from './ShipmentDetails/index.vue'
 import LetterDetails from './ShipmentDetails/LetterDetails.vue'
@@ -57,16 +60,9 @@ const { createOrder } = useClientOrdersStore()
 
 const state = reactive<TOrder>(initialOrder())
 
-const router = useRouter()
-const toast = useToast()
 function onSubmitOrder(event: FormSubmitEvent<TOrder>) {
-  toast.add({
-    title: 'Success',
-    description: 'The form has been submitted.',
-    color: 'success',
-  })
   console.log(event.data)
   createOrder(event.data)
-  router.push('/client')
+  // router.push('/client')
 }
 </script>

@@ -45,7 +45,7 @@ const state = useVModelObject(props, emit)
         label="Вес (кг)"
         class="w-full"
         :ui="{ label: 'font-bold' }"
-        name="packageWeight"
+        name="package.weight"
       >
         <UInput
           v-model="state.weight"
@@ -58,7 +58,7 @@ const state = useVModelObject(props, emit)
       <UFormField
         label="Ценность (руб.)"
         class="w-full"
-        name="packageValue"
+        name="package.value"
         :ui="{ label: 'font-bold' }"
       >
         <UInput
@@ -69,6 +69,6 @@ const state = useVModelObject(props, emit)
         />
       </UFormField>
     </div>
-    <UCheckbox label="Добавить страховку (2% от ценности)" />
+    <!-- <UCheckbox label="Добавить страховку (2% от ценности)" /> -->
   </div>
 </template>
