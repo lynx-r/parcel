@@ -46,7 +46,6 @@ export default defineNuxtConfig({
       serverDir: '.output/server',
     },
     // Настраиваем копирование Query Engine
-    plugins: ['~/server/plugins/prisma-copy.js'],
   },
   vite: {
     resolve: {
