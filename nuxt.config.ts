@@ -44,11 +44,12 @@ export default defineNuxtConfig({
   vite: {
     resolve: {
       alias: {
+        '@prisma/client': './node_modules/@prisma/client',
         // Фикс для .prisma/client/default
-        '.prisma/client/default': './node_modules/.prisma/client/default.js',
+        '.prisma/client/default': './prisma/generated/client/default.js',
         // Если ранее добавляли фикс для index-browser, оставьте его
         '.prisma/client/index-browser':
-          './node_modules/.prisma/client/index-browser.js',
+          './prisma/generated/client/index-browser.js',
         // Общий алиас для Prisma Client
         '.prisma/client': './node_modules/@prisma/client',
       },
