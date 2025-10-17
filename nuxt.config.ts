@@ -6,23 +6,8 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxt/test-utils',
     '@vueuse/nuxt',
-    '@prisma/nuxt',
+    // '@prisma/nuxt',
   ],
-
-  // app: {
-  //   head: {
-  //     charset: 'utf-8',
-  //     viewport: 'width=device-width, initial-scale=1',
-  //   },
-  // },
-
-  // components: [
-  //   {
-  //     path: '~/components',
-  //     pathPrefix: false,
-  //   },
-  // ],
-
   devtools: {
     enabled: true,
   },
@@ -45,4 +30,17 @@ export default defineNuxtConfig({
       },
     },
   },
+  // app: {
+  //   head: {
+  //     charset: 'utf-8',
+  //     viewport: 'width=device-width, initial-scale=1',
+  //   },
+  // },
+
+  // components: [
+  //   {
+  //     path: '~/components',
+  //     pathPrefix: false,
+  //   },
+  // ],
 })

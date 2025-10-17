@@ -1,6 +1,12 @@
-import prisma from '~~/prisma/db'
+import prisma from '~~/lib/prisma.server'
+import { fsmActionSchema } from '~~/shared/utils/validators/orderFormSchema'
 
 export default defineEventHandler(async (event) => {
-  const { orderId } = await readBody(event)
-  return await prisma.$queryRaw`CALL fsm_perform_action('order', ${orderId}, 'reserve_cell', 100, NULL)`
+  const {
+    orderId,
+    action,
+    userId = 100,
+  } = await readValidatedBody(event, fsmActionSchema.parse)
+  await prisma.$queryRaw`CALL fsm_perform_action('order', ${orderId}, ${action}, ${userId}, NULL)`
+  return prisma.order.findUnique({ where: { id: orderId } })
 })

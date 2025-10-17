@@ -47,6 +47,7 @@ const shipmentSchema = z.object({
 export type TShipment = z.output<typeof shipmentSchema>
 
 const orderFormSchema = z.object({
+  id: z.number().positive().optional(),
   status: z.enum([
     'created',
     'reserved',
@@ -63,6 +64,23 @@ const orderFormSchema = z.object({
   // comments: commentsSchema,
   // paymentType: z.enum(['ya', 'sbp']),
 })
+
+export const fsmActionEnumSchema = z.enum([
+  'reserve_cell',
+  'assign_courier',
+  'start_trip',
+  'complete_trip',
+])
+
+export type FsmActionEnum = z.output<typeof fsmActionEnumSchema>
+
+export const fsmActionSchema = z.object({
+  orderId: z.number().positive(),
+  action: fsmActionEnumSchema,
+  userId: z.number().positive(),
+})
+
+export type TFsmAction = z.output<typeof fsmActionSchema>
 
 export type TOrder = z.output<typeof orderFormSchema>
 

@@ -1,4 +1,4 @@
-import prisma from '~~/prisma/db'
+import prisma from '~~/lib/prisma.server'
 import orderFormSchema from '~~/shared/utils/validators/orderFormSchema'
 
 export default defineEventHandler(async (event) => {
