@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpx prisma generate && nuxi build",
+    "build": "npx prisma generate && nuxi build",
     "dev": "nuxt dev",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -43,6 +43,5 @@
   },
   "overrides": {
     "@prisma/client": "$@prisma/client"
-  },
-  "packageManager": "pnpm@10.18.2"
+  }
 }
