@@ -1,5 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import pkg from '@prisma/client'
 import { withAccelerate } from '@prisma/extension-accelerate'
+
+const { PrismaClient } = pkg
 
 const prismaClientSingleton = () => {
   return new PrismaClient().$extends(withAccelerate())
