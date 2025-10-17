@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "./generated/client"
   format   = "esm" // Явно указываем ESM (опционально, в новых версиях не требуется)
 }
