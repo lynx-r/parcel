@@ -225,7 +225,6 @@ const config = {
       "fromEnvVar": null
     },
     "config": {
-      "format": "esm",
       "engineType": "library"
     },
     "binaryTargets": [
@@ -244,7 +243,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
+    "rootEnvPath": "../../../.env",
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../..",
@@ -263,8 +262,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"./generated/client\"\n  format        = \"esm\" // Явно указываем ESM (опционально, в новых версиях не требуется)\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\") // Задай переменную окружения в .env\n}\n\nmodel FsmState {\n  id    Int     @id @default(autoincrement())\n  name  String  @unique\n  label String?\n\n  transitions_from FsmTransition[] @relation(\"FromState\")\n  transitions_to   FsmTransition[] @relation(\"ToState\")\n\n  @@map(\"fsm_states\")\n}\n\nmodel FsmAction {\n  id    Int     @id @default(autoincrement())\n  name  String  @unique\n  label String?\n\n  transitions FsmTransition[]\n\n  @@map(\"fsm_actions\")\n}\n\nmodel FsmTransition {\n  id            Int @id @default(autoincrement())\n  from_state_id Int\n  action_id     Int\n  to_state_id   Int\n\n  from_state FsmState  @relation(\"FromState\", fields: [from_state_id], references: [id])\n  to_state   FsmState  @relation(\"ToState\", fields: [to_state_id], references: [id])\n  action     FsmAction @relation(fields: [action_id], references: [id])\n\n  @@map(\"fsm_transitions\")\n}\n\nmodel FsmActionLog {\n  id          Int      @id @default(autoincrement())\n  entity_type String\n  entity_id   Int\n  action_name String\n  from_state  String\n  to_state    String\n  user_id     Int\n  created_at  DateTime @default(now())\n\n  @@map(\"fsm_action_logs\")\n}\n\nmodel FsmErrorLog {\n  id            Int      @id @default(autoincrement())\n  error_time    DateTime @default(now())\n  error_message String\n  entity_type   String\n  entity_id     Int\n  action_name   String\n  user_id       Int\n\n  @@map(\"fsm_errors_log\")\n}\n\nmodel Order {\n  id          Int     @id @default(autoincrement())\n  status      String\n  description String?\n\n  @@map(\"orders\")\n}\n\nmodel StageOrder {\n  id          Int     @id @default(autoincrement())\n  status      String\n  description String?\n\n  @@map(\"stage_orders\")\n}\n\nmodel Trip {\n  id          Int     @id @default(autoincrement())\n  status      String\n  description String?\n\n  @@map(\"trips\")\n}\n",
-  "inlineSchemaHash": "aa068dc297a4379333d167c1becad8783f96c59bd7593599e97df2cd72955867",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"./generated/client\"\n  // format        = \"esm\" // Явно указываем ESM (опционально, в новых версиях не требуется)\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\") // Задай переменную окружения в .env\n}\n\nmodel FsmState {\n  id    Int     @id @default(autoincrement())\n  name  String  @unique\n  label String?\n\n  transitions_from FsmTransition[] @relation(\"FromState\")\n  transitions_to   FsmTransition[] @relation(\"ToState\")\n\n  @@map(\"fsm_states\")\n}\n\nmodel FsmAction {\n  id    Int     @id @default(autoincrement())\n  name  String  @unique\n  label String?\n\n  transitions FsmTransition[]\n\n  @@map(\"fsm_actions\")\n}\n\nmodel FsmTransition {\n  id            Int @id @default(autoincrement())\n  from_state_id Int\n  action_id     Int\n  to_state_id   Int\n\n  from_state FsmState  @relation(\"FromState\", fields: [from_state_id], references: [id])\n  to_state   FsmState  @relation(\"ToState\", fields: [to_state_id], references: [id])\n  action     FsmAction @relation(fields: [action_id], references: [id])\n\n  @@map(\"fsm_transitions\")\n}\n\nmodel FsmActionLog {\n  id          Int      @id @default(autoincrement())\n  entity_type String\n  entity_id   Int\n  action_name String\n  from_state  String\n  to_state    String\n  user_id     Int\n  created_at  DateTime @default(now())\n\n  @@map(\"fsm_action_logs\")\n}\n\nmodel FsmErrorLog {\n  id            Int      @id @default(autoincrement())\n  error_time    DateTime @default(now())\n  error_message String\n  entity_type   String\n  entity_id     Int\n  action_name   String\n  user_id       Int\n\n  @@map(\"fsm_errors_log\")\n}\n\nmodel Order {\n  id          Int     @id @default(autoincrement())\n  status      String\n  description String?\n\n  @@map(\"orders\")\n}\n\nmodel StageOrder {\n  id          Int     @id @default(autoincrement())\n  status      String\n  description String?\n\n  @@map(\"stage_orders\")\n}\n\nmodel Trip {\n  id          Int     @id @default(autoincrement())\n  status      String\n  description String?\n\n  @@map(\"trips\")\n}\n",
+  "inlineSchemaHash": "558d416e3894379c4488d7e2794c388f29d7a49dbf52bc34017351b64012e357",
   "copyEngine": true
 }
 

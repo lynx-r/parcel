@@ -35,11 +35,18 @@ export default defineNuxtConfig({
   //     pathPrefix: false,
   //   },
   // ],
+  // Включаем бинарные файлы Prisma в сборку
   nitro: {
     externals: {
-      // Исключаем Prisma из бандла для SSR (опционально, если build на Vercel)
-      inline: ['@prisma/client', '.prisma/client'],
+      inline: ['@prisma/client', './prisma/generated/client'],
     },
+    // Копируем бинарные файлы в правильное место
+    output: {
+      publicDir: '.output/public',
+      serverDir: '.output/server',
+    },
+    // Настраиваем копирование Query Engine
+    plugins: ['~/server/plugins/prisma-copy.js'],
   },
   vite: {
     resolve: {
