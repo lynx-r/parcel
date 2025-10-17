@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpx prisma generate && nuxi build",
+    "build": "nuxi build",
     "dev": "nuxt dev",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "postinstall": "pnpx prisma generate && nuxt prepare",
     "lint": "eslint .",
     "typecheck": "nuxt typecheck"
   },

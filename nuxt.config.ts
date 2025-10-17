@@ -38,7 +38,7 @@ export default defineNuxtConfig({
   nitro: {
     externals: {
       // Исключаем Prisma из бандла для SSR (опционально, если build на Vercel)
-      inline: ['@prisma/client', '.prisma'],
+      inline: ['@prisma/client', '.prisma/client'],
     },
   },
   vite: {
