@@ -13,9 +13,6 @@
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
   },
-  "engines": {
-    "node": "20.x"
-  },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.69",
     "@iconify-json/simple-icons": "^1.2.54",
