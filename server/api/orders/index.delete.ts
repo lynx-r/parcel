@@ -1,4 +1,4 @@
-import prisma from '~~/lib/prisma.server'
+import prisma from '~~/server/utils/prisma.server'
 
 export default defineEventHandler(async (event) => {
   const { orderId } = getQuery(event)

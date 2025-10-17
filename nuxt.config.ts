@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxt/test-utils',
     '@vueuse/nuxt',
-    '@prisma/nuxt',
+    // '@prisma/nuxt',
   ],
   devtools: {
     enabled: true,
@@ -14,22 +14,14 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  build: {
+    transpile: ['@prisma/client', './prisma/generated/client'],
+  },
+
   routeRules: {
     '/': { prerender: true },
   },
-
   compatibilityDate: '2025-01-15',
-
-  eslint: {
-    config: {
-      stylistic: {
-        semi: true,
-        quotes: 'single',
-        commaDangle: 'always',
-        braceStyle: '1tbs',
-      },
-    },
-  },
   // app: {
   //   head: {
   //     charset: 'utf-8',
@@ -43,4 +35,34 @@ export default defineNuxtConfig({
   //     pathPrefix: false,
   //   },
   // ],
+  nitro: {
+    externals: {
+      // Исключаем Prisma из бандла для SSR (опционально, если build на Vercel)
+      inline: ['@prisma/client', '.prisma'],
+    },
+  },
+  vite: {
+    resolve: {
+      alias: {
+        // Фикс для .prisma/client/default
+        '.prisma/client/default': './node_modules/.prisma/client/default.js',
+        // Если ранее добавляли фикс для index-browser, оставьте его
+        '.prisma/client/index-browser':
+          './node_modules/.prisma/client/index-browser.js',
+        // Общий алиас для Prisma Client
+        '.prisma/client': './node_modules/@prisma/client',
+      },
+    },
+  },
+
+  eslint: {
+    config: {
+      stylistic: {
+        semi: true,
+        quotes: 'single',
+        commaDangle: 'always',
+        braceStyle: '1tbs',
+      },
+    },
+  },
 })
