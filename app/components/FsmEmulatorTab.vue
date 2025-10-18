@@ -5,6 +5,7 @@ const actionLogHeaders = [
   { accessorKey: 'from_state', header: 'From State' },
   { accessorKey: 'to_state', header: 'To State' },
   { accessorKey: 'action_name', header: 'Action' },
+  { accessorKey: 'created_at', header: 'Created at' },
 ]
 
 const errorLogHeaders = [
@@ -34,6 +35,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <UTable :columns="actionLogHeaders" :data="actionLogData" />
-  <UTable :columns="errorLogHeaders" :data="errorLogData" />
+  <div class="flex flex-col gap-2">
+    <p>Actions Logs</p>
+    <UTable :columns="actionLogHeaders" :data="actionLogData" />
+    <p>Errors Logs</p>
+    <UTable :columns="errorLogHeaders" :data="errorLogData" />
+  </div>
 </template>
