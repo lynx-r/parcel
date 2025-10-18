@@ -10,6 +10,32 @@
       :schema="orderFormSchema"
       @submit.prevent="onSubmitOrder"
     >
+      <UserInformation
+        v-model="state.sender"
+        title="Информация отправителя"
+        type="sender"
+      />
+      <UserInformation
+        v-model="state.recipient"
+        title="Информация получателя"
+        type="recipient"
+      />
+      <ShipmentDetails v-model="state.shipment" />
+      <template v-if="state.package">
+        <PackageDetails
+          v-show="state.shipment.type === 'package'"
+          v-model="state.package"
+        />
+      </template>
+      <template v-if="state.letterValue">
+        <LetterDetails
+          v-show="state.shipment.type === 'letter'"
+          v-model="state.letterValue"
+        />
+      </template>
+      <!-- <GeneralComments v-model="state" /> -->
+      <!-- <PaymentCard v-model="state" /> -->
+
       <USelect v-model="state.status" :items="stateItems" />
       <UInput v-model="state.description" placeholder="Описание заказа" />
       <UButton
@@ -29,6 +55,10 @@ import { initialOrder } from '~/stores/useClientOrdersStore'
 import type { FsmState } from '~/types/fsm'
 import type { TOrder } from '~~/shared/utils/validators/orderFormSchema'
 import orderFormSchema from '~~/shared/utils/validators/orderFormSchema'
+import PackageDetails from './PackageDetails.vue'
+import ShipmentDetails from './ShipmentDetails/index.vue'
+import LetterDetails from './ShipmentDetails/LetterDetails.vue'
+import UserInformation from './UserInformation.vue'
 
 const { createOrder } = useClientOrdersStore()
 const { data: fsmStates } = await useFetch<FsmState[]>('/api/fsm/state')

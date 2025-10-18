@@ -27,7 +27,6 @@ async function main() {
   // FsmTransitions
   const states = await prisma.fsmState.findMany()
   const actions = await prisma.fsmAction.findMany()
-
   await prisma.fsmTransition.createMany({
     data: [
       {
@@ -55,26 +54,34 @@ async function main() {
   })
 
   // Orders
-  await prisma.order.createMany({
-    data: [
-      { status: 'created', description: 'Order 1' },
-      { status: 'reserved', description: 'Order 2' },
-    ],
-  })
+  // await prisma.order.createMany({
+  //   data: [
+  //     { status: 'created', description: 'Order 1',  },
+  //     { status: 'reserved', description: 'Order 2' },
+  //   ],
+  // })
 
   // StageOrders
-  await prisma.stageOrder.createMany({
-    data: [
-      { status: 'created', description: 'Stage order 1' },
-      { status: 'assigned', description: 'Stage order 2' },
-    ],
-  })
+  // await prisma.stageOrder.createMany({
+  //   data: [
+  //     { status: 'created', description: 'Stage order 1' },
+  //     { status: 'assigned', description: 'Stage order 2' },
+  //   ],
+  // })
 
   // Trips
-  await prisma.trip.createMany({
+  // await prisma.trip.createMany({
+  //   data: [
+  //     { status: 'in_progress', description: 'Trip 1' },
+  //     { status: 'completed', description: 'Trip 2' },
+  //   ],
+  // })
+
+  await prisma.parcel.createMany({
     data: [
-      { status: 'in_progress', description: 'Trip 1' },
-      { status: 'completed', description: 'Trip 2' },
+      { location: 'Постомат M-P - Москва, Центра', value: 'moscow' },
+      { location: 'Постомат L - Санкт-Петербург, Невский', value: 'spb' },
+      { location: 'Постамат S - Казань, Баума', value: 'kazan' },
     ],
   })
 }

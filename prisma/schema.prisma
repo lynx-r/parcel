@@ -10,10 +10,25 @@ datasource db {
   url      = env("DATABASE_URL") // Задай переменную окружения в .env
 }
 
+model User {
+  id          Int    @id @default(autoincrement())
+  first_name  String
+  second_name String
+
+  // Связи
+  orders       Order[]
+  stage_orders StageOrder[]
+  trips        Trip[]
+  action_logs  FsmActionLog[]
+  error_logs   FsmErrorLog[]
+
+  @@map("users")
+}
+
 model FsmState {
   id    Int     @id @default(autoincrement())
-  name  String  @unique
-  label String?
+  name  String  @db.VarChar(50)
+  label String? @db.VarChar(100)
 
   transitions_from FsmTransition[] @relation("FromState")
   transitions_to   FsmTransition[] @relation("ToState")
@@ -23,8 +38,8 @@ model FsmState {
 
 model FsmAction {
   id    Int     @id @default(autoincrement())
-  name  String  @unique
-  label String?
+  name  String  @db.VarChar(50)
+  label String? @db.VarChar(100)
 
   transitions FsmTransition[]
 
@@ -45,50 +60,100 @@ model FsmTransition {
 }
 
 model FsmActionLog {
-  id          Int      @id @default(autoincrement())
-  entity_type String
+  id          Int       @id @default(autoincrement())
+  entity_type String?   @db.VarChar(50)
   entity_id   Int
-  action_name String
-  from_state  String
-  to_state    String
+  action_name String?   @db.VarChar(100)
+  from_state  String?   @db.VarChar(50)
+  to_state    String?   @db.VarChar(50)
   user_id     Int
-  created_at  DateTime @default(now())
+  created_at  DateTime?
+  User        User?     @relation(fields: [user_id], references: [id])
 
   @@map("fsm_action_logs")
 }
 
 model FsmErrorLog {
-  id            Int      @id @default(autoincrement())
-  error_time    DateTime @default(now())
-  error_message String
-  entity_type   String
+  id            Int       @id @default(autoincrement())
+  error_time    DateTime?
+  error_message String    @db.Text
+  entity_type   String?   @db.VarChar(50)
   entity_id     Int
-  action_name   String
+  action_name   String?   @db.VarChar(100)
   user_id       Int
+  User          User?     @relation(fields: [user_id], references: [id])
 
   @@map("fsm_errors_log")
 }
 
+model Parcel {
+  id       Int    @id @default(autoincrement())
+  location String @db.VarChar(1000)
+  value    String @db.VarChar(255)
+
+  order Order?
+}
+
+model Logistic {
+  id Int @id @default(autoincrement())
+
+  type String
+
+  cell_id   Int?
+  cell      Parcel? @relation(fields: [cell_id], references: [id])
+  cell_size String? @default("S") @db.VarChar(10)
+
+  address String?
+
+  shipment Shipment?
+}
+
+model Shipment {
+  id Int @id @default(autoincrement())
+
+  delivery_id Int      @unique
+  delivery    Logistic @relation("ShipmentDelivery", fields: [delivery_id], references: [id])
+
+  pickup_id Int      @unique
+  pickup    Logistic @relation("ShipmentPickup", fields: [delivery_id], references: [id])
+
+  order Order?
+}
+
 model Order {
-  id          Int     @id @default(autoincrement())
-  status      String
-  description String?
+  id Int @id @default(autoincrement())
+
+  status      String? @db.VarChar(50)
+  description String? @db.VarChar(255)
+
+  sender_id Int?
+  sender    User? @relation("Sender", fields: [sender_id], references: [id])
+
+  recipient_id Int?
+  recipient    User? @relation("Recipient", fields: [recipient_id], references: [id])
+
+  shipment_id Int?      @unique
+  shipment    Shipment? @relation(fields: [shipment_id], references: [id])
 
   @@map("orders")
 }
 
 model StageOrder {
   id          Int     @id @default(autoincrement())
-  status      String
-  description String?
+  status      String? @db.VarChar(50)
+  description String? @db.VarChar(255)
+  User        User?   @relation(fields: [user_id], references: [id])
+  user_id     Int?
 
   @@map("stage_orders")
 }
 
 model Trip {
   id          Int     @id @default(autoincrement())
-  status      String
-  description String?
+  status      String? @db.VarChar(50)
+  description String? @db.VarChar(255)
+  User        User?   @relation(fields: [user_id], references: [id])
+  user_id     Int?
 
   @@map("trips")
 }

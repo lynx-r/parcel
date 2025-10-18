@@ -56,13 +56,13 @@ const orderFormSchema = z.object({
     'completed',
   ]),
   description: z.string(),
-  // sender: userSchema.optional(),
-  // recipient: userSchema.optional(),
-  // shipment: shipmentSchema,
-  // package: packageSchema.optional(),
-  // letterValue: z.number().positive().optional(),
-  // comments: commentsSchema,
-  // paymentType: z.enum(['ya', 'sbp']),
+  sender: userSchema,
+  recipient: userSchema,
+  shipment: shipmentSchema,
+  package: packageSchema,
+  letterValue: z.number().positive().optional(),
+  comments: commentsSchema,
+  paymentType: z.enum(['ya', 'sbp']),
 })
 
 export const fsmActionEnumSchema = z.enum([

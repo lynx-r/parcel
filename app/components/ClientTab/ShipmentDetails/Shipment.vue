@@ -2,9 +2,9 @@
 import type { TLogistic } from '~~/shared/utils/validators/orderFormSchema'
 
 const availableCells = ref([
-  { label: 'Постомат M-P - Москва, Центра', id: 'moscow' },
-  { label: 'Постомат L - Санкт-Петербург, Невский', id: 'spb' },
-  { label: 'Постамат S - Казань, Баума', id: 'kazan' },
+  { label: 'Постомат M-P - Москва, Центра', short_name: 'moscow' },
+  { label: 'Постомат L - Санкт-Петербург, Невский', short_name: 'spb' },
+  { label: 'Постамат S - Казань, Баума', short_name: 'kazan' },
 ])
 
 const props = defineProps<{

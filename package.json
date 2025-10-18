@@ -11,7 +11,7 @@
     "typecheck": "nuxt typecheck"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "npx ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@iconify-json/lucide": "^1.2.69",
@@ -35,7 +35,6 @@
     "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
-    "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.1.1"
   },
