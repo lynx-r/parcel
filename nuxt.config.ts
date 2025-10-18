@@ -1,3 +1,7 @@
+// import { createResolver } from '@nuxt/kit'
+
+// const resolver = createResolver(import.meta.url)
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: [
@@ -15,13 +19,35 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   build: {
-    transpile: ['@prisma/client', './prisma/generated/client'],
+    transpile: [
+      '@prisma/client',
+      './prisma/generated/client',
+      // resolver.resolve('./server/plugins/prisma-copy.js'),
+    ],
   },
 
-  routeRules: {
-    '/': { prerender: true },
-  },
+  // routeRules: {
+  // '/': { prerender: false },
+  // },
   compatibilityDate: '2025-01-15',
+
+  nitro: {
+    prerender: {
+      routes: [], // Отключаем prerendering всех маршрутов
+    },
+    // Включаем Prisma и кастомные файлы в сборку
+    externals: {
+      // inline: ['@prisma/client', './prisma/generated/client'],
+      external: ['@prisma/client', '.prisma/client'], // важно
+    },
+    // Копируем бинарные файлы Prisma
+    // plugins: ['~/server/plugins/prisma-copy.js'],
+    esbuild: {
+      options: {
+        target: 'es2020',
+      },
+    },
+  },
   // app: {
   //   head: {
   //     charset: 'utf-8',
@@ -36,30 +62,21 @@ export default defineNuxtConfig({
   //   },
   // ],
   // Включаем бинарные файлы Prisma в сборку
-  nitro: {
-    externals: {
-      inline: ['@prisma/client', './prisma/generated/client'],
-    },
-    // Копируем бинарные файлы в правильное место
-    output: {
-      publicDir: '.output/public',
-      serverDir: '.output/server',
-    },
-    // Настраиваем копирование Query Engine
-    // plugins: ['./server/plugins/prisma-copy.js'],
-  },
+
   vite: {
     resolve: {
       alias: {
-        '@prisma/client': './node_modules/@prisma/client',
-        // Фикс для .prisma/client/default
         '.prisma/client/default': './prisma/generated/client/default.js',
-        // Если ранее добавляли фикс для index-browser, оставьте его
         '.prisma/client/index-browser':
           './prisma/generated/client/index-browser.js',
-        // Общий алиас для Prisma Client
-        '.prisma/client': './node_modules/@prisma/client',
+        '.prisma/client': './prisma/generated/client',
+        '@prisma/client': './prisma/generated/client',
+        'node:os': 'os',
       },
+    },
+    optimizeDeps: {
+      // Исключаем node:os из оптимизации, так как это встроенный модуль
+      exclude: ['node:os', '@prisma/client', './prisma/generated/client'],
     },
   },
 

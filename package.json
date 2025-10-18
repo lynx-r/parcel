@@ -3,12 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npx prisma generate && nuxi build",
+    "build": "prisma generate && nuxi build",
     "dev": "nuxt dev",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "typecheck": "nuxt typecheck"
+    "typecheck": "nuxt typecheck",
+    "generate": "prisma generate"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
