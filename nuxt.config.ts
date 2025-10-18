@@ -19,13 +19,13 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  // build: {
-  // transpile: [
-  // '@prisma/client',
-  // './prisma/generated/client',
-  // resolver.resolve('./server/plugins/prisma-copy.js'),
-  // ],
-  // },
+  build: {
+    transpile: [
+      // '@prisma/client',
+      // './prisma/generated/client',
+      // resolver.resolve('./server/plugins/prisma-copy.js'),
+    ],
+  },
 
   // routeRules: {
   // '/': { prerender: false },
@@ -75,10 +75,10 @@ export default defineNuxtConfig({
         // 'node:os': 'os',
       },
     },
-    optimizeDeps: {
-      // Исключаем node:os из оптимизации, так как это встроенный модуль
-      exclude: ['node:os', '@prisma/client', './node_modules/.prisma/client'],
-    },
+    // optimizeDeps: {
+    // Исключаем node:os из оптимизации, так как это встроенный модуль
+    // exclude: ['node:os', '@prisma/client', './node_modules/.prisma/client'],
+    // },
   },
 
   eslint: {
