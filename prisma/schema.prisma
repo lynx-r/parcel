@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  output        = "./generated/client"
+  // output        = "./generated/client"
   // format        = "esm" // Явно указываем ESM (опционально, в новых версиях не требуется)
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }

@@ -9,8 +9,9 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@pinia/nuxt',
     '@nuxt/test-utils',
-    '@vueuse/nuxt',
     // '@prisma/nuxt',
+    '@vueuse/nuxt',
+    '@prisma/nuxt',
   ],
   devtools: {
     enabled: true,
@@ -18,36 +19,36 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  build: {
-    transpile: [
-      '@prisma/client',
-      './prisma/generated/client',
-      // resolver.resolve('./server/plugins/prisma-copy.js'),
-    ],
-  },
+  // build: {
+  // transpile: [
+  // '@prisma/client',
+  // './prisma/generated/client',
+  // resolver.resolve('./server/plugins/prisma-copy.js'),
+  // ],
+  // },
 
   // routeRules: {
   // '/': { prerender: false },
   // },
   compatibilityDate: '2025-01-15',
 
-  nitro: {
-    prerender: {
-      routes: [], // Отключаем prerendering всех маршрутов
-    },
-    // Включаем Prisma и кастомные файлы в сборку
-    externals: {
-      // inline: ['@prisma/client', './prisma/generated/client'],
-      external: ['@prisma/client', '.prisma/client'], // важно
-    },
-    // Копируем бинарные файлы Prisma
-    // plugins: ['~/server/plugins/prisma-copy.js'],
-    esbuild: {
-      options: {
-        target: 'es2020',
-      },
-    },
-  },
+  // nitro: {
+  //   prerender: {
+  //     routes: [], // Отключаем prerendering всех маршрутов
+  //   },
+  //   // Включаем Prisma и кастомные файлы в сборку
+  //   externals: {
+  //     // inline: ['@prisma/client', './prisma/generated/client'],
+  //     // external: ['@prisma/client', '.prisma/client'], // важно
+  //   },
+  //   // Копируем бинарные файлы Prisma
+  //   // plugins: ['~/server/plugins/prisma-copy.js'],
+  //   esbuild: {
+  //     options: {
+  //       target: 'es2020',
+  //     },
+  //   },
+  // },
   // app: {
   //   head: {
   //     charset: 'utf-8',
@@ -66,17 +67,17 @@ export default defineNuxtConfig({
   vite: {
     resolve: {
       alias: {
-        '.prisma/client/default': './prisma/generated/client/default.js',
+        '.prisma/client/default': './node_modules/.prisma/client/default.js',
         '.prisma/client/index-browser':
-          './prisma/generated/client/index-browser.js',
-        '.prisma/client': './prisma/generated/client',
-        '@prisma/client': './prisma/generated/client',
+          './node_modules/.prisma/client/index-browser.js',
+        // '.prisma/client': './node_modules/.prisma/client',
+        // '@prisma/client': './node_modules/.prisma/client',
         'node:os': 'os',
       },
     },
     optimizeDeps: {
       // Исключаем node:os из оптимизации, так как это встроенный модуль
-      exclude: ['node:os', '@prisma/client', './prisma/generated/client'],
+      exclude: ['node:os', '@prisma/client', './node_modules/.prisma/client'],
     },
   },
 

@@ -1,4 +1,4 @@
-import prisma from '~~/server/utils/prisma.server'
+import prisma from '~~/lib/prisma'
 
 export default defineEventHandler(async () => {
   const orders = await prisma.order.findMany()
