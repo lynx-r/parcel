@@ -72,7 +72,7 @@ export default defineNuxtConfig({
           './node_modules/.prisma/client/index-browser.js',
         // '.prisma/client': './node_modules/.prisma/client',
         // '@prisma/client': './node_modules/.prisma/client',
-        'node:os': 'os',
+        // 'node:os': 'os',
       },
     },
     optimizeDeps: {
