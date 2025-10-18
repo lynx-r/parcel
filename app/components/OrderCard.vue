@@ -30,6 +30,7 @@ async function onDelete() {
 
 <template>
   <UCard>
+    <div>ID: {{ state.id }}</div>
     <div>Статус: {{ state.status }}</div>
     <div>Описание: {{ state.description }}</div>
     <div class="flex gap-2">
