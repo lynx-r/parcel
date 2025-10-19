@@ -7,11 +7,10 @@
     <UForm
       class="gap-4 flex flex-col"
       :state="state"
-      :schema="orderFormSchema"
       @submit.prevent="onSubmitOrder"
     >
       <UserInformation
-        v-model="state.sender"
+        v-model="state.sender_id"
         title="Информация отправителя"
         type="sender"
       />
@@ -53,8 +52,7 @@
 import type { FormSubmitEvent, SelectItem } from '@nuxt/ui'
 import { initialOrder } from '~/stores/useClientOrdersStore'
 import type { FsmState } from '~/types/fsm'
-import type { TOrder } from '~~/shared/utils/validators/orderFormSchema'
-import orderFormSchema from '~~/shared/utils/validators/orderFormSchema'
+import type { TCreateOrder } from '~~/shared/utils/validators/orderFormSchema'
 import PackageDetails from './PackageDetails.vue'
 import ShipmentDetails from './ShipmentDetails/index.vue'
 import LetterDetails from './ShipmentDetails/LetterDetails.vue'
@@ -66,9 +64,9 @@ console.log(fsmStates.value)
 const stateItems = computed<SelectItem[] | undefined>(() =>
   fsmStates.value?.map((state) => ({ label: state.label, value: state.name })),
 )
-const state = reactive<TOrder>(initialOrder())
+const state = reactive<TCreateOrder>(initialOrder())
 
-function onSubmitOrder(event: FormSubmitEvent<TOrder>) {
+function onSubmitOrder(event: FormSubmitEvent<TCreateOrder>) {
   console.log(event.data)
   createOrder(event.data)
   // router.push('/client')

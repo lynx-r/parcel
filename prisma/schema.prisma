@@ -11,16 +11,16 @@ datasource db {
 }
 
 model User {
-  id          Int    @id @default(autoincrement())
-  first_name  String
-  second_name String
+  id    Int    @id @default(autoincrement())
+  name  String
+  phone String
 
   // Связи
-  orders       Order[]
-  stage_orders StageOrder[]
-  trips        Trip[]
-  action_logs  FsmActionLog[]
-  error_logs   FsmErrorLog[]
+  sender_orders    Order[] @relation("Sender")
+  recipient_orders Order[] @relation("Recipient")
+
+  action_logs FsmActionLog[]
+  error_logs  FsmErrorLog[]
 
   @@map("users")
 }
@@ -66,9 +66,10 @@ model FsmActionLog {
   action_name String?   @db.VarChar(100)
   from_state  String?   @db.VarChar(50)
   to_state    String?   @db.VarChar(50)
-  user_id     Int
   created_at  DateTime?
-  User        User?     @relation(fields: [user_id], references: [id])
+
+  user_id Int?
+  user    User? @relation(fields: [user_id], references: [id])
 
   @@map("fsm_action_logs")
 }
@@ -80,8 +81,9 @@ model FsmErrorLog {
   entity_type   String?   @db.VarChar(50)
   entity_id     Int
   action_name   String?   @db.VarChar(100)
-  user_id       Int
-  User          User?     @relation(fields: [user_id], references: [id])
+
+  user_id Int?
+  user    User? @relation(fields: [user_id], references: [id])
 
   @@map("fsm_errors_log")
 }
@@ -91,7 +93,9 @@ model Parcel {
   location String @db.VarChar(1000)
   value    String @db.VarChar(255)
 
-  order Order?
+  logistic Logistic[]
+
+  @@map("parcels")
 }
 
 model Logistic {
@@ -105,19 +109,31 @@ model Logistic {
 
   address String?
 
-  shipment Shipment?
+  // Логистика может быть пунктом доставки для ОДНОГО отправления
+  delivery_shipment Shipment? @relation("ShipmentDelivery")
+
+  // Логистика может быть пунктом забора для ОДНОГО отправления
+  pickup_shipment Shipment? @relation("ShipmentPickup")
+
+  @@map("logistics")
 }
 
 model Shipment {
   id Int @id @default(autoincrement())
 
-  delivery_id Int      @unique
-  delivery    Logistic @relation("ShipmentDelivery", fields: [delivery_id], references: [id])
+  type String
 
+  // Связь с логистикой, которая является пунктом доставки
+  delivery_id Int      @unique
+  delivery    Logistic @relation("ShipmentDelivery", fields: [delivery_id], references: [id], map: "ShipmentDelivery_fkey")
+
+  // Связь с логистикой, которая является пунктом забора
   pickup_id Int      @unique
-  pickup    Logistic @relation("ShipmentPickup", fields: [delivery_id], references: [id])
+  pickup    Logistic @relation("ShipmentPickup", fields: [pickup_id], references: [id], map: "ShipmentPickup_fkey")
 
   order Order?
+
+  @@map("shipments")
 }
 
 model Order {
@@ -135,6 +151,8 @@ model Order {
   shipment_id Int?      @unique
   shipment    Shipment? @relation(fields: [shipment_id], references: [id])
 
+  stage_order StageOrder?
+
   @@map("orders")
 }
 
@@ -142,8 +160,9 @@ model StageOrder {
   id          Int     @id @default(autoincrement())
   status      String? @db.VarChar(50)
   description String? @db.VarChar(255)
-  User        User?   @relation(fields: [user_id], references: [id])
-  user_id     Int?
+
+  order_id Int?   @unique
+  order    Order? @relation(fields: [order_id], references: [id])
 
   @@map("stage_orders")
 }
@@ -152,8 +171,6 @@ model Trip {
   id          Int     @id @default(autoincrement())
   status      String? @db.VarChar(50)
   description String? @db.VarChar(255)
-  User        User?   @relation(fields: [user_id], references: [id])
-  user_id     Int?
 
   @@map("trips")
 }

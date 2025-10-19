@@ -1,57 +1,27 @@
 import { defineStore, skipHydrate } from 'pinia'
-import type { TOrder } from '~~/shared/utils/validators/orderFormSchema'
+import type { TCreateOrder } from '~~/shared/utils/validators/orderFormSchema'
 
-export const initialOrder = (): TOrder => ({
-  sender: {
-    name: '',
-    phone: '',
-  },
-  recipient: {
-    name: '',
-    phone: '',
-  },
+export const initialOrder = (): TCreateOrder => ({
+  sender_id: 100,
+  recipient_id: 101,
   shipment: {
-    pickup: {
-      type: 'parcel',
-      cell: '',
-    },
-    delivery: {
-      type: 'parcel',
-      cell: '',
-    },
+    pickup_id: 0,
+    delivery_id: 0,
     type: 'package',
-  },
-  letterValue: undefined,
-  package: {
-    width: 0,
-    depth: 0,
-    height: 0,
-    weight: 0,
-    value: 0,
-  },
-  comments: {
-    fragile: false,
-    protectFromMoisture: false,
-    callBeforeDelivery: false,
-    comment: '',
-    leaveAtDoor: false,
-    notRotate: false,
-    urgentDelivery: false,
   },
   status: 'created',
   description: '',
-  paymentType: 'ya',
 })
 
 const useClientOrdersStore = defineStore('clientOrders', () => {
   // const order = ref<TOrder>(initialOrder())
-  const orders = useLocalStorage<TOrder[]>('pinia/client-orders', [])
+  const orders = useLocalStorage<TCreateOrder[]>('pinia/client-orders', [])
 
-  // const orders = ref<TOrder[]>([])
+  // const orders = ref<TCreateOrder[]>([])
   // const router = useRouter()
   const toast = useToast()
 
-  function createOrder(order: TOrder) {
+  function createOrder(order: TCreateOrder) {
     toast.add({
       title: 'Success',
       description: 'The form has been submitted.',
@@ -72,9 +42,9 @@ const useClientOrdersStore = defineStore('clientOrders', () => {
   }
 })
 
-// const useClientOrdersStore = defineStore('clientOrders', {
+// const useClientCreateOrdersStore = defineStore('clientCreateOrders', {
 //   state: () => ({
-//     orders: useStorage<TOrder[]>('client-orders', []),
+//     orders: useStorage<TCreateOrder[]>('client-orders', []),
 //   }),
 //   actions: {
 //     createOrder(order: TOrder) {

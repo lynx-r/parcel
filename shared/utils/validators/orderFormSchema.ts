@@ -1,53 +1,57 @@
-import z from 'zod'
+import { z } from 'zod'
 
 // Схема Zod для валидации IOrder
-const userSchema = z.object({
-  name: z.string().min(2),
-  phone: z.string().min(2),
-  // добавьте другие поля интерфейса IUser
+
+export const userSchema = z.object({
+  id: z.number().int().optional(),
+  name: z.string(),
+  phone: z.string(),
 })
 
 export type TUser = z.output<typeof userSchema>
 
-const packageSchema = z.object({
-  width: z.number().positive(),
-  depth: z.number().positive(),
-  height: z.number().positive(),
-  weight: z.number().positive(),
-  value: z.number().positive(),
+export const parcelSchema = z.object({
+  id: z.number().int(),
+  location: z.string().max(1000),
+  value: z.string().max(255),
 })
-export type TPackage = z.output<typeof packageSchema>
 
-const commentsSchema = z.object({
-  fragile: z.boolean(),
-  protectFromMoisture: z.boolean(),
-  callBeforeDelivery: z.boolean(),
-  notRotate: z.boolean(),
-  urgentDelivery: z.boolean(),
-  leaveAtDoor: z.boolean(),
-  comment: z.string(),
-})
+export type TParcel = z.output<typeof parcelSchema>
 
 const logisticOptionsSchema = z.enum(['parcel', 'courier'])
 
-const logisticSchema = z.object({
+export const logisticSchema = z.object({
+  id: z.number().int(),
   type: logisticOptionsSchema,
-  cell: z.string(),
-  address: z.string().optional().nullable(),
+  cell_id: z.number().int().nullable(),
+  cell_size: z.string().max(10).default('S').nullable(),
+  address: z.string().nullable(),
 })
 
 export type TLogistic = z.output<typeof logisticSchema>
 
-const shipmentSchema = z.object({
+// Базовая схема Shipment, которая включает id
+export const shipmentSchema = z.object({
+  id: z.number().int(),
   type: z.enum(['package', 'letter']),
-  delivery: logisticSchema,
-  pickup: logisticSchema,
+  delivery_id: z.number().int(),
+  pickup_id: z.number().int(),
 })
 
 export type TShipment = z.output<typeof shipmentSchema>
 
-const orderFormSchema = z.object({
-  id: z.number().positive().optional(),
+// Схема для создания Shipment, без id
+export const createShipmentSchema = z.object({
+  type: z.enum(['package', 'letter']),
+  delivery_id: z.number().int(),
+  pickup_id: z.number().int(),
+})
+
+export type TCreateShipment = z.output<typeof createShipmentSchema>
+
+// Схема Order для получения данных
+export const orderSchema = z.object({
+  id: z.number().int(),
   status: z.enum([
     'created',
     'reserved',
@@ -55,15 +59,29 @@ const orderFormSchema = z.object({
     'in_progress',
     'completed',
   ]),
-  description: z.string(),
-  sender: userSchema,
-  recipient: userSchema,
-  shipment: shipmentSchema,
-  package: packageSchema,
-  letterValue: z.number().positive().optional(),
-  comments: commentsSchema,
-  paymentType: z.enum(['ya', 'sbp']),
+  description: z.string().max(255).nullable(),
+  sender_id: z.number().int().nullable(),
+  recipient_id: z.number().int().nullable(),
+  shipment_id: z.number().int().nullable(),
 })
+
+export type TOrder = z.output<typeof orderSchema>
+
+// Схема для создания нового Order
+// Поля id и shipment_id отсутствуют
+// Поле shipment используется для вложенной записи
+export const createOrderSchema = z.object({
+  status: z
+    .enum(['created', 'reserved', 'assigned', 'in_progress', 'completed'])
+    .optional()
+    .default('created'),
+  description: z.string().max(255).nullable(),
+  sender_id: z.number().int(),
+  recipient_id: z.number().int(),
+  shipment: createShipmentSchema, // Вложенная запись
+})
+
+export type TCreateOrder = z.output<typeof createOrderSchema>
 
 export const fsmActionEnumSchema = z.enum([
   'reserve_cell',
@@ -82,6 +100,9 @@ export const fsmActionSchema = z.object({
 
 export type TFsmAction = z.output<typeof fsmActionSchema>
 
-export type TOrder = z.output<typeof orderFormSchema>
-
-export default orderFormSchema
+// Схемы с реляционными полями (используя z.lazy() для циклических ссылок)
+export const OrderWithRelationsSchema = orderSchema.extend({
+  shipment: z.lazy(() => shipmentSchema).nullable(),
+  sender: z.lazy(() => userSchema).nullable(),
+  recipient: z.lazy(() => userSchema).nullable(),
+})
