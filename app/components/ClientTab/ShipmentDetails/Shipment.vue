@@ -1,16 +1,21 @@
 <script lang="ts" setup>
-import type {
-  TLogistic,
-  TParcel,
-} from '~~/shared/utils/validators/orderFormSchema'
+import type { SelectItem } from '@nuxt/ui'
+import type { TLogistic } from '~~/shared/utils/validators/orderFormSchema'
 
 const props = defineProps<{
   modelValue: TLogistic
   shipment: 'delivery' | 'pickup'
-  parcels: TParcel[]
+  parcels: SelectItem[]
 }>()
+
 const emit = defineEmits(['update:modelValue'])
 const state = useVModelObject<TLogistic>(props, emit)
+
+function onTypeChange() {
+  state.address = null
+  state.cell_id = null
+  state.cell_size = null
+}
 </script>
 
 <template>
@@ -20,14 +25,14 @@ const state = useVModelObject<TLogistic>(props, emit)
         v-model="state.type"
         :items="[
           { label: 'Постомат', id: 'parcel' },
-          { label: 'Письмо', id: 'courier' },
+          { label: 'Курьер', id: 'courier' },
         ]"
         value-key="id"
         class="w-full"
+        @change="onTypeChange"
       />
     </UFormField>
     <UFormField
-      v-if="state.cell_id"
       v-show="state.type === 'parcel'"
       label="Постомат отправки"
       :name="`${shipment}.cell`"
@@ -36,7 +41,7 @@ const state = useVModelObject<TLogistic>(props, emit)
       <USelect
         v-model="state.cell_id"
         :items="parcels"
-        value-key="value"
+        value-key="id"
         class="w-full"
       />
     </UFormField>

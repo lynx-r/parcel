@@ -1,4 +1,3 @@
-
 CREATE PROCEDURE fsm_perform_action(
     IN p_entity_type VARCHAR(50),
     IN p_entity_id INT,

@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import type {
   FsmActionEnum,
-  TOrder,
+  TOrderWithRelationsSchema,
 } from '~~/shared/utils/validators/orderFormSchema'
 
-const props = defineProps<{ modelValue: TOrder }>()
+const props = defineProps<{ modelValue: TOrderWithRelationsSchema }>()
 
 const emit = defineEmits(['update:modelValue', 'delete'])
-const state = useVModelObject<TOrder>(props, emit)
+const state = useVModelObject<TOrderWithRelationsSchema>(props, emit)
 
 async function onPerformAction(action: FsmActionEnum) {
   const res = await $fetch('/api/fsm/perform_action', {
@@ -33,6 +33,20 @@ async function onDelete() {
     <div>ID: {{ state.id }}</div>
     <div>Статус: {{ state.status }}</div>
     <div>Описание: {{ state.description }}</div>
+    <div>От: {{ state.sender?.name }}</div>
+    <div>Кому: {{ state.recipient?.name }}</div>
+    <div v-if="state.shipment?.delivery?.cell?.location">
+      Откуда постомат: {{ state.shipment?.delivery?.cell?.location }}
+    </div>
+    <div v-if="state.shipment?.delivery?.address">
+      Откуда адресс: {{ state.shipment?.delivery?.address }}
+    </div>
+    <div v-if="state.shipment?.pickup?.cell?.location">
+      Куда постомат: {{ state.shipment?.pickup?.cell?.location }}
+    </div>
+    <div v-if="state.shipment?.pickup?.address">
+      Куда адресс: {{ state.shipment?.pickup?.address }}
+    </div>
     <div class="flex gap-2">
       <!-- <UButton @click="onPerformAction()">Получатель забрал</UButton> -->
       <!-- <UButton @click="onPerformAction('')">Срок хранения истек</UButton> -->

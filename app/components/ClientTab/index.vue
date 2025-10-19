@@ -35,7 +35,7 @@
       <!-- <GeneralComments v-model="state" /> -->
       <!-- <PaymentCard v-model="state" /> -->
 
-      <USelect v-model="state.status" :items="stateItems" />
+      <!-- <USelect v-model="state.status" :items="stateItems" /> -->
       <UInput v-model="state.description" placeholder="Описание заказа" />
       <UButton
         class="flex justify-center"
@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FormSubmitEvent, SelectItem } from '@nuxt/ui'
+import type { FormSubmitEvent } from '@nuxt/ui'
 import { initialOrder } from '~/stores/useClientOrdersStore'
 import type { FsmState } from '~/types/fsm'
 import type { TCreateOrder } from '~~/shared/utils/validators/orderFormSchema'
@@ -58,9 +58,9 @@ import ShipmentDetails from './ShipmentDetails/index.vue'
 const { createOrder } = useClientOrdersStore()
 const { data: fsmStates } = await useFetch<FsmState[]>('/api/fsm/state')
 console.log(fsmStates.value)
-const stateItems = computed<SelectItem[] | undefined>(() =>
-  fsmStates.value?.map((state) => ({ label: state.label, value: state.name })),
-)
+// const stateItems = computed<SelectItem[] | undefined>(() =>
+// fsmStates.value?.map((state) => ({ label: state.label, value: state.name })),
+// )
 const state = reactive<TCreateOrder>(initialOrder())
 
 function onSubmitOrder(event: FormSubmitEvent<TCreateOrder>) {

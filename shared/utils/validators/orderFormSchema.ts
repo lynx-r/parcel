@@ -21,6 +21,7 @@ export type TParcel = z.output<typeof parcelSchema>
 export const createLogisticSchema = z.object({
   type: z.enum(['parcel', 'courier']),
   cell_id: z.number().int().nullable(),
+  // move cell_size upper
   cell_size: z.string().max(10).default('S').nullable(),
   address: z.string().nullable(),
 })
@@ -81,9 +82,18 @@ export const createOrderSchema = z.object({
 
 export type TCreateOrder = z.output<typeof createOrderSchema>
 
+export const createLogisticWithRelationsSchema = createLogisticSchema.extend({
+  cell: z.lazy(() => parcelSchema).nullable(),
+})
+
+export const shipmentWithRelationsSchema = shipmentSchema.extend({
+  delivery: z.lazy(() => createLogisticWithRelationsSchema).nullable(),
+  pickup: z.lazy(() => createLogisticWithRelationsSchema).nullable(),
+})
+
 // Схемы с реляционными полями (используя z.lazy() для циклических ссылок)
 export const orderWithRelationsSchema = orderSchema.extend({
-  shipment: z.lazy(() => shipmentSchema).nullable(),
+  shipment: z.lazy(() => shipmentWithRelationsSchema).nullable(),
   sender: z.lazy(() => userSchema).nullable(),
   recipient: z.lazy(() => userSchema).nullable(),
 })

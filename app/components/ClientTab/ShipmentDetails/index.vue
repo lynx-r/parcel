@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { SelectItem } from '@nuxt/ui'
 import type { TCreateShipment } from '~~/shared/utils/validators/orderFormSchema'
 import Shipment from './Shipment.vue'
 
@@ -9,6 +10,26 @@ const emit = defineEmits(['update:modelValue'])
 const state = useVModelObject<TCreateShipment>(props, emit)
 
 const { data: parcels } = await useFetch('/api/parcels')
+const deliveryParcels = computed<SelectItem[]>(
+  () =>
+    parcels.value
+      ?.map((parcel) => ({
+        label: parcel.location,
+        value: parcel.value,
+        id: parcel.id,
+      }))
+      .filter((parcel) => parcel.id !== state.pickup.cell_id) || [],
+)
+const pickupParcels = computed<SelectItem[]>(
+  () =>
+    parcels.value
+      ?.map((parcel) => ({
+        label: parcel.location,
+        value: parcel.value,
+        id: parcel.id,
+      }))
+      .filter((parcel) => parcel.id !== state.delivery.cell_id) || [],
+)
 </script>
 
 <template>
@@ -28,10 +49,14 @@ const { data: parcels } = await useFetch('/api/parcels')
     <div v-if="parcels" class="flex gap-4">
       <Shipment
         v-model="state.delivery"
-        :parcels="parcels"
+        :parcels="deliveryParcels"
         shipment="delivery"
       />
-      <Shipment v-model="state.pickup" :parcels="parcels" shipment="pickup" />
+      <Shipment
+        v-model="state.pickup"
+        :parcels="pickupParcels"
+        shipment="pickup"
+      />
     </div>
   </div>
 </template>
