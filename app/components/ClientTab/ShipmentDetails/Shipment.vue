@@ -1,18 +1,16 @@
 <script lang="ts" setup>
-import type { TLogistic } from '~~/shared/utils/validators/orderFormSchema'
-
-const availableCells = ref([
-  { label: 'Постомат M-P - Москва, Центра', short_name: 'moscow' },
-  { label: 'Постомат L - Санкт-Петербург, Невский', short_name: 'spb' },
-  { label: 'Постамат S - Казань, Баума', short_name: 'kazan' },
-])
+import type {
+  TLogistic,
+  TParcel,
+} from '~~/shared/utils/validators/orderFormSchema'
 
 const props = defineProps<{
   modelValue: TLogistic
   shipment: 'delivery' | 'pickup'
+  parcels: TParcel[]
 }>()
 const emit = defineEmits(['update:modelValue'])
-const state = useVModelObject(props, emit)
+const state = useVModelObject<TLogistic>(props, emit)
 </script>
 
 <template>
@@ -29,15 +27,16 @@ const state = useVModelObject(props, emit)
       />
     </UFormField>
     <UFormField
+      v-if="state.cell_id"
       v-show="state.type === 'parcel'"
       label="Постомат отправки"
       :name="`${shipment}.cell`"
       class="w-full"
     >
       <USelect
-        v-model="state.cell"
-        :items="availableCells"
-        value-key="id"
+        v-model="state.cell_id"
+        :items="parcels"
+        value-key="value"
         class="w-full"
       />
     </UFormField>

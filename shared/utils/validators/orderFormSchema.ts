@@ -18,17 +18,14 @@ export const parcelSchema = z.object({
 
 export type TParcel = z.output<typeof parcelSchema>
 
-const logisticOptionsSchema = z.enum(['parcel', 'courier'])
-
-export const logisticSchema = z.object({
-  id: z.number().int(),
-  type: logisticOptionsSchema,
+export const createLogisticSchema = z.object({
+  type: z.enum(['parcel', 'courier']),
   cell_id: z.number().int().nullable(),
   cell_size: z.string().max(10).default('S').nullable(),
   address: z.string().nullable(),
 })
 
-export type TLogistic = z.output<typeof logisticSchema>
+export type TLogistic = z.output<typeof createLogisticSchema>
 
 // Базовая схема Shipment, которая включает id
 export const shipmentSchema = z.object({
@@ -43,8 +40,8 @@ export type TShipment = z.output<typeof shipmentSchema>
 // Схема для создания Shipment, без id
 export const createShipmentSchema = z.object({
   type: z.enum(['package', 'letter']),
-  delivery_id: z.number().int(),
-  pickup_id: z.number().int(),
+  delivery: createLogisticSchema,
+  pickup: createLogisticSchema,
 })
 
 export type TCreateShipment = z.output<typeof createShipmentSchema>
@@ -72,8 +69,9 @@ export type TOrder = z.output<typeof orderSchema>
 // Поле shipment используется для вложенной записи
 export const createOrderSchema = z.object({
   status: z
-    .enum(['created', 'reserved', 'assigned', 'in_progress', 'completed'])
-    .optional()
+    // .enum(['created', 'reserved', 'assigned', 'in_progress', 'completed'])
+    .string()
+    // .optional()
     .default('created'),
   description: z.string().max(255).nullable(),
   sender_id: z.number().int(),
@@ -82,6 +80,16 @@ export const createOrderSchema = z.object({
 })
 
 export type TCreateOrder = z.output<typeof createOrderSchema>
+
+// Схемы с реляционными полями (используя z.lazy() для циклических ссылок)
+export const orderWithRelationsSchema = orderSchema.extend({
+  shipment: z.lazy(() => shipmentSchema).nullable(),
+  sender: z.lazy(() => userSchema).nullable(),
+  recipient: z.lazy(() => userSchema).nullable(),
+})
+export type TOrderWithRelationsSchema = z.output<
+  typeof orderWithRelationsSchema
+>
 
 export const fsmActionEnumSchema = z.enum([
   'reserve_cell',

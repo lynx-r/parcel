@@ -20,10 +20,20 @@ export default defineEventHandler(async (event) => {
         create: {
           type: shipment.type,
           delivery: {
-            connect: { id: shipment.delivery_id },
+            create: {
+              type: shipment.delivery.type,
+              cell_id: shipment.delivery.cell_id,
+              cell_size: shipment.delivery.cell_size,
+              address: shipment.delivery.address,
+            },
           },
           pickup: {
-            connect: { id: shipment.pickup_id },
+            create: {
+              type: shipment.pickup.type,
+              cell_id: shipment.pickup.cell_id,
+              cell_size: shipment.pickup.cell_size,
+              address: shipment.pickup.address,
+            },
           },
         },
       },

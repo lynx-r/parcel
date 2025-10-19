@@ -9,7 +9,7 @@
       :state="state"
       @submit.prevent="onSubmitOrder"
     >
-      <UserInformation
+      <!-- <UserInformation
         v-model="state.sender_id"
         title="Информация отправителя"
         type="sender"
@@ -18,9 +18,9 @@
         v-model="state.recipient"
         title="Информация получателя"
         type="recipient"
-      />
+      /> -->
       <ShipmentDetails v-model="state.shipment" />
-      <template v-if="state.package">
+      <!-- <template v-if="state.package">
         <PackageDetails
           v-show="state.shipment.type === 'package'"
           v-model="state.package"
@@ -31,7 +31,7 @@
           v-show="state.shipment.type === 'letter'"
           v-model="state.letterValue"
         />
-      </template>
+      </template> -->
       <!-- <GeneralComments v-model="state" /> -->
       <!-- <PaymentCard v-model="state" /> -->
 
@@ -53,10 +53,7 @@ import type { FormSubmitEvent, SelectItem } from '@nuxt/ui'
 import { initialOrder } from '~/stores/useClientOrdersStore'
 import type { FsmState } from '~/types/fsm'
 import type { TCreateOrder } from '~~/shared/utils/validators/orderFormSchema'
-import PackageDetails from './PackageDetails.vue'
 import ShipmentDetails from './ShipmentDetails/index.vue'
-import LetterDetails from './ShipmentDetails/LetterDetails.vue'
-import UserInformation from './UserInformation.vue'
 
 const { createOrder } = useClientOrdersStore()
 const { data: fsmStates } = await useFetch<FsmState[]>('/api/fsm/state')

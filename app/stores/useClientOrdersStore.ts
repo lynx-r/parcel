@@ -5,8 +5,13 @@ export const initialOrder = (): TCreateOrder => ({
   sender_id: 100,
   recipient_id: 101,
   shipment: {
-    pickup_id: 0,
-    delivery_id: 0,
+    pickup: { type: 'parcel', cell_id: 0, cell_size: 'S', address: null },
+    delivery: {
+      type: 'courier',
+      cell_id: null,
+      cell_size: null,
+      address: 'eses',
+    },
     type: 'package',
   },
   status: 'created',

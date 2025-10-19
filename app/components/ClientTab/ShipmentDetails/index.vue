@@ -1,12 +1,14 @@
 <script lang="ts" setup>
-import type { TShipment } from '~~/shared/utils/validators/orderFormSchema'
+import type { TCreateShipment } from '~~/shared/utils/validators/orderFormSchema'
 import Shipment from './Shipment.vue'
 
 const props = defineProps<{
-  modelValue: TShipment
+  modelValue: TCreateShipment
 }>()
 const emit = defineEmits(['update:modelValue'])
-const state = useVModelObject(props, emit)
+const state = useVModelObject<TCreateShipment>(props, emit)
+
+const { data: parcels } = await useFetch('/api/parcels')
 </script>
 
 <template>
@@ -23,9 +25,13 @@ const state = useVModelObject(props, emit)
         class="w-full"
       />
     </UFormField>
-    <div class="flex gap-4">
-      <Shipment v-model="state.delivery" shipment="delivery" />
-      <Shipment v-model="state.pickup" shipment="pickup" />
+    <div v-if="parcels" class="flex gap-4">
+      <Shipment
+        v-model="state.delivery"
+        :parcels="parcels"
+        shipment="delivery"
+      />
+      <Shipment v-model="state.pickup" :parcels="parcels" shipment="pickup" />
     </div>
   </div>
 </template>
