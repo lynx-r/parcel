@@ -47,6 +47,9 @@ async function onDelete() {
     <div v-if="state.shipment?.pickup?.cell?.location">
       Куда постомат: {{ state.shipment?.pickup?.cell?.location }}
     </div>
+    <div v-if="state.shipment?.pickup?.cell_size">
+      Размер ячейки: {{ state.shipment?.pickup?.cell_size }}
+    </div>
     <div v-if="state.shipment?.pickup?.address">
       Куда адресс: {{ state.shipment?.pickup?.address }}
     </div>
